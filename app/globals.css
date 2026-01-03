@@ -123,4 +123,8 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Hide v0 badge globally */
+  #V0-badge {
+    display: none !important;
+  }
 }
