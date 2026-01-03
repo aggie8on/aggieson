@@ -1,0 +1,78 @@
+"use client"
+
+import { useEffect } from "react"
+import { X } from "lucide-react"
+import Image from "next/image"
+import type { Project } from "@/app/efforts/page"
+import { Button } from "@/components/ui/button"
+
+interface ProjectModalProps {
+  project: Project | null
+  onClose: () => void
+}
+
+export function ProjectModal({ project, onClose }: ProjectModalProps) {
+  useEffect(() => {
+    if (project) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "unset"
+    }
+    return () => {
+      document.body.style.overflow = "unset"
+    }
+  }, [project])
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", handleEscape)
+    return () => window.removeEventListener("keydown", handleEscape)
+  }, [onClose])
+
+  if (!project) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-background rounded-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-6 py-3 flex items-center justify-between z-10">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl md:text-2xl font-medium">{project.title}</h2>
+            <span className="text-sm text-muted-foreground">• {project.year}</span>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close</span>
+          </Button>
+        </div>
+
+        <div className="p-4 md:p-8 space-y-6">
+          <p className="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto text-sm md:text-base">
+            {project.description}
+          </p>
+
+          <div className="space-y-6">
+            {project.images.map((image, index) => (
+              <div key={index} className="relative w-full aspect-video overflow-hidden rounded-lg bg-muted">
+                <Image
+                  src={image || "/placeholder.svg"}
+                  alt={`${project.title} - Image ${index + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
