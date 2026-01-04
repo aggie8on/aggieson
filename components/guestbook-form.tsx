@@ -6,21 +6,37 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { createClient } from "@/lib/supabase/client"
+import { useRouter } from "next/navigation"
 
-interface GuestbookFormProps {
-  onSubmit: (name: string, message: string) => void
-}
-
-export function GuestbookForm({ onSubmit }: GuestbookFormProps) {
+export function GuestbookForm() {
   const [name, setName] = useState("")
   const [message, setMessage] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (name.trim() && message.trim()) {
-      onSubmit(name, message)
-      setName("")
-      setMessage("")
+      setIsSubmitting(true)
+      const supabase = createClient()
+
+      const { error } = await supabase.from("guestbook_entries").insert({
+        name: name.trim(),
+        message: message.trim(),
+      })
+
+      if (error) {
+        console.error("Error adding guestbook entry:", error)
+        alert("Failed to add entry. Please try again.")
+      } else {
+        setName("")
+        setMessage("")
+        // Refresh the page to show new entry
+        router.refresh()
+      }
+
+      setIsSubmitting(false)
     }
   }
 
@@ -36,6 +52,7 @@ export function GuestbookForm({ onSubmit }: GuestbookFormProps) {
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
           required
+          disabled={isSubmitting}
           className="bg-background"
         />
       </div>
@@ -51,12 +68,13 @@ export function GuestbookForm({ onSubmit }: GuestbookFormProps) {
           placeholder="Leave a message..."
           rows={4}
           required
+          disabled={isSubmitting}
           className="bg-background resize-none"
         />
       </div>
 
-      <Button type="submit" className="w-full">
-        Sign Guestbook
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Submitting..." : "Sign Guestbook"}
       </Button>
     </form>
   )

@@ -3,7 +3,7 @@
 import { Navigation } from "@/components/navigation"
 import { GuestbookForm } from "@/components/guestbook-form"
 import { GuestbookEntries } from "@/components/guestbook-entries"
-import { useState, useEffect } from "react"
+import { createClient } from "@/lib/supabase/server"
 
 export interface GuestbookEntry {
   id: string
@@ -12,66 +12,33 @@ export interface GuestbookEntry {
   timestamp: string
 }
 
-const defaultEntries: GuestbookEntry[] = [
-  {
-    id: "3",
-    name: "Sarah Chen",
-    message:
-      "Your attention to detail is incredible. The minimalist approach really lets the content breathe. Inspiring work!",
-    timestamp: "2025.01.02",
-  },
-  {
-    id: "2",
-    name: "Marcus Rodriguez",
-    message: "Love the clean aesthetic and thoughtful writing. Keep creating beautiful things!",
-    timestamp: "2024.12.28",
-  },
-  {
-    id: "1",
-    name: "Emma Thompson",
-    message:
-      "Found your site through a friend's recommendation. Really enjoying the content and the simple, elegant design.",
-    timestamp: "2024.12.15",
-  },
-]
+export default async function GuestbookPage() {
+  const supabase = await createClient()
 
-export default function GuestbookPage() {
-  const [entries, setEntries] = useState<GuestbookEntry[]>(defaultEntries)
-  const [isLoaded, setIsLoaded] = useState(false)
+  // Fetch entries from Supabase
+  const { data: entries, error } = await supabase
+    .from("guestbook_entries")
+    .select("*")
+    .order("created_at", { ascending: false })
 
-  useEffect(() => {
-    const savedEntries = localStorage.getItem("guestbook-entries")
-    if (savedEntries) {
-      try {
-        setEntries(JSON.parse(savedEntries))
-      } catch (error) {
-        console.error("Failed to parse guestbook entries:", error)
-      }
-    }
-    setIsLoaded(true)
-  }, [])
+  if (error) {
+    console.error("Error fetching guestbook entries:", error)
+  }
 
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("guestbook-entries", JSON.stringify(entries))
-    }
-  }, [entries, isLoaded])
-
-  const handleAddEntry = (name: string, message: string) => {
-    const newEntry: GuestbookEntry = {
-      id: Date.now().toString(),
-      name,
-      message,
-      timestamp: new Date()
+  // Format entries for display
+  const formattedEntries =
+    entries?.map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      message: entry.message,
+      timestamp: new Date(entry.created_at)
         .toLocaleDateString("en-US", {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",
         })
         .replace(/\//g, "."),
-    }
-    setEntries([newEntry, ...entries])
-  }
+    })) || []
 
   return (
     <>
@@ -86,9 +53,9 @@ export default function GuestbookPage() {
             </p>
           </section>
 
-          <GuestbookForm onSubmit={handleAddEntry} />
+          <GuestbookForm />
 
-          <GuestbookEntries entries={entries} />
+          <GuestbookEntries entries={formattedEntries} />
         </div>
       </main>
     </>

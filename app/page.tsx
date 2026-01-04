@@ -16,8 +16,8 @@ export default function HomePage() {
           <section className="space-y-4">
             <h1 className="text-4xl font-medium tracking-tight text-balance md:text-5xl">People, Places & Moments.</h1>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-              Creating thoughtful digital experiences. Always with a camera or sort of. I effortlessly share my thoughts
-              in a calm & dustless space.
+              Helping people set up podcasts. Always with a camera or sort of. I effortlessly share my thoughts in a
+              calm & dustless space.
             </p>
           </section>
 
