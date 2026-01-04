@@ -4,12 +4,13 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
-import { ShoppingCart } from "lucide-react"
+import { ShoppingCart, Menu, X } from "lucide-react"
 import { useCartStore } from "@/lib/cart-store"
 
 export function Navigation() {
   const pathname = usePathname()
   const [datetime, setDatetime] = useState("")
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const itemCount = useCartStore((state) => state.itemCount)
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export function Navigation() {
             {datetime}
           </div>
 
-          <ul className="flex items-center gap-6">
+          <ul className="hidden md:flex items-center gap-6">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
@@ -73,7 +74,49 @@ export function Navigation() {
               </Link>
             </li>
           </ul>
+
+          <div className="flex md:hidden items-center gap-4">
+            <Link
+              href="/shop"
+              className={cn(
+                "transition-colors hover:text-foreground relative",
+                pathname === "/shop" ? "text-foreground" : "text-muted-foreground",
+              )}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && <span className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full" />}
+              <span className="sr-only">Shop</span>
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
+
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pt-4 border-t border-border">
+            <ul className="flex flex-col gap-4">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "text-base transition-colors hover:text-foreground block",
+                      pathname === link.href ? "text-foreground font-medium" : "text-muted-foreground",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </nav>
   )
