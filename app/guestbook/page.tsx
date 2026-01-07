@@ -3,7 +3,7 @@
 import { Navigation } from "@/components/navigation"
 import { GuestbookForm } from "@/components/guestbook-form"
 import { GuestbookEntries } from "@/components/guestbook-entries"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/client"
 
 export interface GuestbookEntry {
   id: string
