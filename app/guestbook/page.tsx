@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Navigation } from "@/components/navigation";
-import { getGuestbookEntries } from "@/lib/guestbook-data";
+import { unstable_noStore as noStore } from "next/cache";
 
 interface GuestbookEntry {
   id: string;
@@ -9,20 +7,62 @@ interface GuestbookEntry {
   timestamp: string;
 }
 
-// This will be a server component that fetches data at build time
+// Server component that fetches data
 export default async function GuestbookPage() {
-  const entries = await getGuestbookEntries();
-  return <GuestbookClient initialEntries={entries} />;
+  noStore();
+  // Don't fetch data in server component for Vercel compatibility
+  return <GuestbookClient />;
 }
 
-// Separate client component for the interactive parts
-function GuestbookClient({ initialEntries }: { initialEntries: GuestbookEntry[] }) {
-  const [entries, setEntries] = useState<GuestbookEntry[]>(initialEntries);
+// Client component with 'use client' directive
+"use client";
+
+import { useState, useEffect } from "react";
+import { Navigation } from "@/components/navigation";
+
+function GuestbookClient() {
+  const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // Fetch entries when component mounts
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        const response = await fetch('/api/guestbook');
+        if (!response.ok) {
+          throw new Error('Failed to fetch entries');
+        }
+        const data = await response.json();
+        setEntries(data);
+      } catch (err) {
+        console.error("Error fetching guestbook entries:", err);
+        // Set default entries on error
+        setEntries([
+          {
+            id: "1",
+            name: "Site Owner",
+            message: "Welcome to my guestbook! Feel free to leave a message for others to see.",
+            timestamp: new Date(Date.now() - 86400000).toISOString(),
+          },
+          {
+            id: "2",
+            name: "First Visitor",
+            message: "Thanks for creating this guestbook!",
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEntries();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,8 +101,7 @@ function GuestbookClient({ initialEntries }: { initialEntries: GuestbookEntry[] 
       const result = await response.json();
       
       // Add the new entry to the local state to update the UI immediately
-      const updatedEntries = [result.entry, ...entries];
-      setEntries(updatedEntries);
+      setEntries(prev => [result.entry, ...prev]);
       
       // Reset form
       setName("");
@@ -161,7 +200,9 @@ function GuestbookClient({ initialEntries }: { initialEntries: GuestbookEntry[] 
 
           <section className="space-y-6">
             <h2 className="text-xl font-medium">Messages</h2>
-            {entries.length === 0 ? (
+            {loading ? (
+              <p className="text-muted-foreground">Loading messages...</p>
+            ) : entries.length === 0 ? (
               <p className="text-muted-foreground">No messages yet. Be the first to leave one!</p>
             ) : (
               <div className="space-y-6">
