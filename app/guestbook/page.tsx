@@ -5,6 +5,8 @@ import { GuestbookForm } from "@/components/guestbook-form"
 import { GuestbookEntries } from "@/components/guestbook-entries"
 import { createClient } from "@/lib/supabase/client"
 
+export const dynamic = "force-dynamic"
+
 export interface GuestbookEntry {
   id: string
   name: string
