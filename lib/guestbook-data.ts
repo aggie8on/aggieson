@@ -1,6 +1,4 @@
 import { unstable_noStore as noStore } from "next/cache";
-import { promises as fs } from "fs";
-import path from "path";
 
 export interface GuestbookEntry {
   id: string;
@@ -9,22 +7,31 @@ export interface GuestbookEntry {
   timestamp: string;
 }
 
-// For a real implementation with static files, you would:
-// 1. Read from a JSON file in the public directory
-// 2. Or use a build-time data file
-// 3. Or implement a solution that updates a static file during build
 export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
-  noStore(); // Don't cache this in development
+  noStore(); // Don't cache this
   
   try {
-    // Read from the guestbook JSON file in the public directory
-    const filePath = path.join(process.cwd(), 'public', 'guestbook.json');
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    const entries: GuestbookEntry[] = JSON.parse(fileContents);
+    // For server components in Next.js, we need to handle the API route differently
+    // In Vercel deployment, we'll make an internal fetch to the API route
+    const res = await fetch('/api/guestbook', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // For Vercel deployment, we need to avoid caching
+      cache: 'no-store',
+      next: { revalidate: 0 } // Force revalidation
+    });
+    
+    if (!res.ok) {
+      throw new Error('Failed to fetch guestbook entries');
+    }
+    
+    const entries: GuestbookEntry[] = await res.json();
     return entries;
   } catch (error) {
-    console.error("Error reading guestbook file:", error);
-    // Return default entries if file doesn't exist
+    console.error("Error fetching guestbook entries:", error);
+    // Return default entries if API call fails
     return [
       {
         id: "1",
@@ -40,13 +47,4 @@ export async function getGuestbookEntries(): Promise<GuestbookEntry[]> {
       },
     ];
   }
-}
-
-// This would be an API endpoint in a real implementation
-export async function addGuestbookEntry(entry: GuestbookEntry): Promise<void> {
-  // In a real implementation, this would:
-  // 1. Add the entry to a database
-  // 2. Or trigger a build to update a static file
-  // 3. Or use a service like GitHub to store entries in a repo
-  console.log("Adding guestbook entry:", entry);
 }
