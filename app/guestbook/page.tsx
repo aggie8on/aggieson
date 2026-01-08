@@ -1,4 +1,4 @@
-"use client"
+
 
 import { Navigation } from "@/components/navigation"
 import { GuestbookForm } from "@/components/guestbook-form"
