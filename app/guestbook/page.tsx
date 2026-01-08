@@ -12,18 +12,7 @@ export interface GuestbookEntry {
   timestamp: string
 }
 
-export default async function GuestbookPage() {
-  const supabase = await createClient()
 
-  // Fetch entries from Supabase
-  const { data: entries, error } = await supabase
-    .from("guestbook_entries")
-    .select("*")
-    .order("created_at", { ascending: false })
-
-  if (error) {
-    console.error("Error fetching guestbook entries:", error)
-  }
 
   // Format entries for display
   const formattedEntries =
