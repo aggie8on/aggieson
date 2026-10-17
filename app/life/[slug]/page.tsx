@@ -17,6 +17,7 @@ export default async function LifeItemPage({ params }: { params: Promise<{ slug:
   const body = typeof item.content?.body === "string" ? item.content.body : ""
   return (
     <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
+      <Link href="/" className="mb-5 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">← Aggieson</Link>
       <Link href="/life" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft size={14} /> Back to life</Link>
       <article className="mt-10">
         <p className="text-sm text-muted-foreground">{item.category} · {item.item_type.replace("-", " ")}</p>
