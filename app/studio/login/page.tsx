@@ -22,8 +22,9 @@ export default function StudioLoginPage() {
     try {
       const supabase = createClient()
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({ email: OWNER_EMAIL, password, options: { emailRedirectTo: `${window.location.origin}/studio` } })
+        const { data, error } = await supabase.auth.signUp({ email: OWNER_EMAIL, password, options: { emailRedirectTo: `${window.location.origin}/studio` } })
         if (error) throw error
+        if (data.session) { router.replace("/studio"); router.refresh(); return }
         setMessage("Account request sent. If email confirmation is enabled, open the confirmation link in your inbox, then sign in.")
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: OWNER_EMAIL, password })
