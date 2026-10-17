@@ -35,7 +35,7 @@ export default function BlogPage() {
                   </h2>
                   <span className="shrink-0 text-sm text-muted-foreground">{post.date}</span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{post.content[0]?.slice(0, 160)}{post.content[0] && post.content[0].length > 160 ? "…" : ""}</p>
                 <span className="mt-2 block text-xs text-muted-foreground">{post.readTime}</span>
               </Link>
             ))}
