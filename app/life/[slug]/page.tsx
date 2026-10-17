@@ -17,9 +17,10 @@ export default async function LifeItemPage({ params }: { params: Promise<{ slug:
   const body = typeof item.content?.body === "string" ? item.content.body : ""
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-12 sm:px-6 md:pt-16">
-      <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2">
-        <Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link>
-        <Link href="/life" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"><ArrowLeft size={14} /> Back to life</Link>
+      <nav aria-label="Breadcrumb" className="mb-5">
+        <Link href="/life" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+          <ArrowLeft size={14} /> Back to life
+        </Link>
       </nav>
       <article className="mt-7">
         <p className="text-sm text-muted-foreground">{item.category} · {item.item_type.replace("-", " ")}</p>
