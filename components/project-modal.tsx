@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 import { X } from "lucide-react"
 import Image from "next/image"
-import type { Project } from "@/app/efforts/page"
+import type { Project } from "@/lib/projects"
 import { Button } from "@/components/ui/button"
 
 interface ProjectModalProps {
