@@ -50,12 +50,12 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         aria-modal="true"
         aria-labelledby="project-modal-title"
         tabIndex={-1}
-        className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-background rounded-lg focus:outline-none"
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-6 py-3 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <h2 id="project-modal-title" className="text-xl md:text-2xl font-medium">{project.title}</h2>
+            <h2 id="project-modal-title" className="text-base md:text-lg font-medium tracking-[-0.02em]">{project.title}</h2>
             <span className="text-sm text-muted-foreground">• {project.year}</span>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
@@ -64,12 +64,12 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           </Button>
         </div>
 
-        <div className="p-4 md:p-8 space-y-6">
-          <p className="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto text-sm md:text-base">
+        <div className="p-4 md:p-6 space-y-5">
+          <p className="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto text-sm">
             {project.description}
           </p>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {project.images.map((image, index) => (
               <div key={index} className="relative w-full aspect-video overflow-hidden bg-muted">
                 <Image
