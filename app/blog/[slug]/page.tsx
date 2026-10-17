@@ -12,7 +12,7 @@ export default function BlogPostPage() {
   const params = useParams()
   const slug = params.slug as string
   const post = blogPosts[slug]
-  const [copySuccess, setCopySuccess] = useState(false)
+  const [copyStatus, setCopyStatus] = useState<"copied" | "error" | null>(null)
 
   if (!post) {
     return (
@@ -25,24 +25,28 @@ export default function BlogPostPage() {
     )
   }
 
-  const handleShare = (platform: string) => {
+  const handleShare = async (platform: string) => {
     const url = typeof window !== "undefined" ? window.location.href : ""
     const text = post.title
 
     switch (platform) {
       case "twitter":
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`)
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer")
         break
       case "facebook":
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`)
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer")
         break
       case "linkedin":
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`)
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer")
         break
       case "copy":
-        navigator.clipboard.writeText(url)
-        setCopySuccess(true)
-        setTimeout(() => setCopySuccess(false), 2000)
+        try {
+          await navigator.clipboard.writeText(url)
+          setCopyStatus("copied")
+        } catch {
+          setCopyStatus("error")
+        }
+        window.setTimeout(() => setCopyStatus(null), 2500)
         break
     }
   }
@@ -88,12 +92,13 @@ export default function BlogPostPage() {
               size="icon"
               onClick={() => handleShare("copy")}
               className="h-8 w-8"
-              title={copySuccess ? "Copied!" : "Copy link"}
+              title={copyStatus === "copied" ? "Copied!" : copyStatus === "error" ? "Copy failed" : "Copy link"}
             >
               <LinkIcon className="h-4 w-4" />
               <span className="sr-only">Copy link</span>
             </Button>
-            {copySuccess && <span className="text-xs text-muted-foreground">Copied!</span>}
+            {copyStatus === "copied" && <span role="status" className="text-xs text-muted-foreground">Copied!</span>}
+            {copyStatus === "error" && <span role="status" className="text-xs text-muted-foreground">Couldn’t copy. Copy the URL from your address bar.</span>}
           </div>
 
           {post.audioUrl && (
