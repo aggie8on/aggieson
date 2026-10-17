@@ -30,8 +30,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) notFound()
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16 md:py-24">
-      <article className="space-y-8">
+    <main className="mx-auto max-w-2xl px-5 py-10 sm:px-6 md:py-16">
+      <article className="space-y-6">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link>
         <Link
           href="/blog"
@@ -41,8 +41,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           Back to writing
         </Link>
 
-        <header className="space-y-4">
-          <h1 className="text-4xl font-medium tracking-tight text-balance">{post.title}</h1>
+        <header className="space-y-3">
+          <h1 className="text-3xl font-medium tracking-[-0.04em] text-balance md:text-4xl">{post.title}</h1>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span>{post.date}</span>
             <span aria-hidden="true">•</span>
@@ -62,15 +62,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
         )}
 
-        <div className="prose prose-neutral dark:prose-invert max-w-none space-y-6">
+        <div className="prose prose-neutral dark:prose-invert max-w-none space-y-4 text-[15px]">
           {post.content.map((paragraph, index) => (
-            <p key={index} className="leading-relaxed text-foreground/90">
+            <p key={index} className="text-[15px] leading-7 text-foreground/90">
               {paragraph}
             </p>
           ))}
         </div>
 
-        <nav aria-label="Adjacent articles" className="flex items-start justify-between gap-6 border-t border-border pt-8">
+        <nav aria-label="Adjacent articles" className="flex items-start justify-between gap-6 border-t border-border pt-6">
           {post.previousPost ? (
             <Link
               href={`/blog/${post.previousPost.slug}`}
