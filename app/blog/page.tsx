@@ -1,6 +1,3 @@
-"use client"
-
-import { Navigation } from "@/components/navigation"
 import Link from "next/link"
 import { blogPosts } from "@/lib/blog-data"
 
@@ -10,8 +7,6 @@ export default function BlogPage() {
   })
 
   return (
-    <>
-      <Navigation />
       <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
         <div className="space-y-12">
           <section className="space-y-4">
@@ -42,6 +37,5 @@ export default function BlogPage() {
           </div>
         </div>
       </main>
-    </>
   )
 }
