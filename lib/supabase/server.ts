@@ -1,13 +1,13 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 
+// These are public project settings, not service-role credentials. RLS enforces access.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://akgzftoebezfnmvnlokq.supabase.co"
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "sb_publishable_dl4mSQ58vvc94xX5i2yVzQ_CN9GUb44"
+
 export async function createClient() {
   const cookieStore = await cookies()
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error("Supabase environment variables are missing.")
-
-  return createServerClient(url, key, {
+  return createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
       getAll() { return cookieStore.getAll() },
       setAll(cookiesToSet) {
