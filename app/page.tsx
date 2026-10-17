@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowUpRight, Download } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import { blogPosts } from "@/lib/blog-data"
 
 const selectedWork = [
@@ -36,13 +36,7 @@ export default function HomePage() {
             >
               Get in touch <ArrowUpRight size={14} strokeWidth={1.8} />
             </Link>
-            <a
-              href="/cv.pdf"
-              download
-              className="inline-flex h-9 items-center gap-2 rounded-md border border-black/[0.09] bg-white px-5 text-[13px] font-medium tracking-[-0.02em] text-[#4e4e4e] shadow-[0_1px_3px_rgba(11,19,36,0.07),inset_0_-1px_0_rgba(0,0,0,0.12)] transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2"
-            >
-              Download CV <Download size={13} strokeWidth={1.7} />
-            </a>
+
           </div>
         </section>
 
