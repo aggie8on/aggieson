@@ -18,14 +18,14 @@ export function HomeSelectedWork() {
 
   return (
     <>
-      <section aria-labelledby="work-heading" className="space-y-5">
+      <section aria-labelledby="work-heading" className="space-y-3">
         <div className="flex items-baseline justify-between gap-4">
           <h2 id="work-heading" className="text-sm font-medium text-muted-foreground">Selected work</h2>
           <Link href="/efforts" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
             All work <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
           {selectedProjects.map((project) => (
             <button
               key={project.id}
@@ -43,7 +43,7 @@ export function HomeSelectedWork() {
                   sizes="(max-width: 640px) 100vw, 50vw"
                 />
               </span>
-              <span className="mt-3 flex items-baseline justify-between gap-3">
+              <span className="mt-2 flex items-baseline justify-between gap-3">
                 <span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">{project.title}</span>
                 <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{project.year}</span>
               </span>
