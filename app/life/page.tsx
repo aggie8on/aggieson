@@ -20,28 +20,28 @@ export default async function LifePage() {
   const groupFor = (item: PortfolioItem) => item.item_type === "wishlist" && item.is_owned ? "My setup" : item.category || itemTypeLabels[item.item_type] || "Life"
   const groups = [...new Set(items.map(groupFor))]
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
-      <div className="mb-8"><Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link></div>
-      <section className="space-y-4">
+    <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-12 sm:px-6 md:pt-16">
+      <div className="mb-5"><Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link></div>
+      <section className="space-y-3">
         <p className="text-sm text-muted-foreground">Outside the portfolio</p>
-        <h1 className="text-4xl font-medium tracking-[-0.05em] md:text-5xl">Life, lately.</h1>
-        <p className="max-w-xl text-base leading-7 text-muted-foreground">A growing collection of things I enjoy, keep close, cook, listen to, use, and want to remember.</p>
+        <h1 className="text-3xl font-medium tracking-[-0.045em] md:text-4xl">Life, lately.</h1>
+        <p className="max-w-xl text-sm leading-6 text-muted-foreground">A growing collection of things I enjoy, keep close, cook, listen to, use, and want to remember.</p>
       </section>
 
       {items.length === 0 ? (
-        <div className="mt-12 border-y border-border py-8">
+        <div className="mt-8 border-y border-border py-6">
           <p className="text-sm leading-6 text-muted-foreground">A quiet corner for recipes, music, bookmarks, places worth finding, desk notes, and small things from everyday life. More soon.</p>
         </div>
       ) : (
-        <div className="mt-12 space-y-12">
+        <div className="mt-8 space-y-8">
           {groups.map((group) => (
-            <section key={group} className="space-y-4">
+            <section key={group} className="space-y-3">
               <h2 className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{group}</h2>
               <div className="divide-y divide-border border-y border-border">
                 {items.filter((item) => groupFor(item) === group).map((item) => (
-                  <article key={item.id} className="py-5">
+                  <article key={item.id} className="py-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-5">
-                      <Link href={`/life/${item.slug}`} className="text-base font-medium tracking-[-0.025em] transition-colors hover:text-muted-foreground">{item.title}</Link>
+                      <Link href={`/life/${item.slug}`} className="text-sm font-medium tracking-[-0.02em] transition-colors hover:text-muted-foreground">{item.title}</Link>
                       <span className="shrink-0 text-xs text-muted-foreground">{item.item_type === "wishlist" && item.is_owned ? "In my setup" : itemTypeLabels[item.item_type] ?? item.category}</span>
                     </div>
                     {item.excerpt && <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.excerpt}</p>}
