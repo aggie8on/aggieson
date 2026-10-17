@@ -3,10 +3,10 @@ import { ArrowUpRight, Download } from "lucide-react"
 import { blogPosts } from "@/lib/blog-data"
 
 const selectedWork = [
-  { title: "Phone 3(a) Community Edition", category: "Product design", year: "2024" },
-  { title: "Ear(Open) Concept", category: "Audio design", year: "2024" },
-  { title: "Skarper", category: "Mobility", year: "2023" },
-  { title: "Inaya", category: "Wellness", year: "2023" },
+  { id: "1", title: "Phone 3(a) Community Edition", category: "Product design", year: "2024" },
+  { id: "2", title: "Ear(Open) Concept", category: "Audio design", year: "2024" },
+  { id: "4", title: "Skarper", category: "Mobility", year: "2023" },
+  { id: "5", title: "Inaya", category: "Wellness", year: "2023" },
 ]
 
 export default function HomePage() {
@@ -34,7 +34,7 @@ export default function HomePage() {
               href="#contact"
               className="inline-flex h-9 items-center gap-2 rounded-md bg-[#ff6321] px-5 text-[13px] font-medium tracking-[-0.02em] text-white shadow-[0_1px_3px_rgba(0,0,0,0.1),inset_0_1px_0.75px_rgba(255,255,255,0.12),inset_0_-1px_0_#d95017] transition-colors hover:bg-[#ed581b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6321] focus-visible:ring-offset-2"
             >
-              Book a call <ArrowUpRight size={14} strokeWidth={1.8} />
+              Get in touch <ArrowUpRight size={14} strokeWidth={1.8} />
             </Link>
             <a
               href="/cv.pdf"
@@ -58,7 +58,7 @@ export default function HomePage() {
             {selectedWork.map((project) => (
               <Link
                 key={project.title}
-                href="/efforts"
+                href={`/efforts?project=${project.id}`}
                 aria-label={`Explore ${project.title}`}
                 className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-4 transition-colors hover:text-muted-foreground sm:grid-cols-[minmax(0,1fr)_130px_42px_16px]"
               >
