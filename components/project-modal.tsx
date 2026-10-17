@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { X } from "lucide-react"
 import Image from "next/image"
 import type { Project } from "@/app/efforts/page"
@@ -12,6 +12,8 @@ interface ProjectModalProps {
 }
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (project) {
       document.body.style.overflow = "hidden"
@@ -21,6 +23,10 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     return () => {
       document.body.style.overflow = "unset"
     }
+  }, [project])
+
+  useEffect(() => {
+    if (project) dialogRef.current?.focus()
   }, [project])
 
   useEffect(() => {
@@ -39,12 +45,17 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-background rounded-lg"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-modal-title"
+        tabIndex={-1}
+        className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-background rounded-lg focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-6 py-3 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <h2 className="text-xl md:text-2xl font-medium">{project.title}</h2>
+            <h2 id="project-modal-title" className="text-xl md:text-2xl font-medium">{project.title}</h2>
             <span className="text-sm text-muted-foreground">• {project.year}</span>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
