@@ -12,7 +12,7 @@ export default function HomePage() {
     <main className="mx-auto w-full max-w-3xl px-5 pb-16 pt-12 sm:px-6 md:pt-16">
       <div className="space-y-12 md:space-y-16">
         <section aria-labelledby="intro-heading" className="space-y-3">
-          <div className="space-y-4">
+          <div className="space-y-3">
             <p className="text-sm text-muted-foreground">Designer · Creator · Curious human</p>
             <h1 id="intro-heading" className="text-4xl font-medium tracking-[-0.055em] md:text-5xl">
               Aggieson
@@ -42,7 +42,7 @@ export default function HomePage() {
                 href={`/blog/${post.slug}`}
                 className="group flex flex-col gap-1 py-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
               >
-                <span className="font-medium tracking-[-0.025em] transition-colors group-hover:text-muted-foreground">
+                <span className="text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">
                   {post.title}
                 </span>
                 <span className="shrink-0 text-sm text-muted-foreground">{post.date}</span>
