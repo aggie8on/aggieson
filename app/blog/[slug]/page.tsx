@@ -32,6 +32,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <main className="mx-auto max-w-2xl px-6 py-16 md:py-24">
       <article className="space-y-8">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link>
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"

@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { ProjectModal } from "@/components/project-modal"
@@ -24,20 +25,29 @@ export function HomeSelectedWork() {
             All work <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
         </div>
-        <div className="divide-y divide-border border-y border-border">
+        <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2">
           {selectedProjects.map((project) => (
             <button
               key={project.id}
               type="button"
               onClick={() => setSelectedProject(project)}
               aria-label={`View ${project.title} project details`}
-              className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-4 text-left transition-colors hover:text-muted-foreground sm:grid-cols-[minmax(0,1fr)_130px_42px_16px]"
+              className="group min-w-0 text-left"
             >
-              <span className="font-medium tracking-[-0.025em]">{project.title}</span>
-              <span className="hidden text-sm text-muted-foreground sm:block">{project.category}</span>
-              <span className="text-right text-sm tabular-nums text-muted-foreground">{project.year}</span>
-              <ArrowUpRight className="hidden h-3.5 w-3.5 text-muted-foreground sm:block" strokeWidth={1.6} />
-              <span className="col-span-2 -mt-1 text-xs text-muted-foreground sm:hidden">{project.category}</span>
+              <span className="relative block aspect-[4/3] overflow-hidden bg-muted">
+                <Image
+                  src={project.image || "/placeholder.svg"}
+                  alt={project.title}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                />
+              </span>
+              <span className="mt-3 flex items-baseline justify-between gap-3">
+                <span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">{project.title}</span>
+                <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{project.year}</span>
+              </span>
+              <span className="mt-1 block text-xs text-muted-foreground">{project.category}</span>
             </button>
           ))}
         </div>

@@ -71,12 +71,12 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
           <div className="space-y-6">
             {project.images.map((image, index) => (
-              <div key={index} className="relative w-full aspect-video overflow-hidden rounded-lg bg-muted">
+              <div key={index} className="relative w-full aspect-video overflow-hidden bg-muted">
                 <Image
                   src={image || "/placeholder.svg"}
                   alt={`${project.title} - Image ${index + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                 />
               </div>
