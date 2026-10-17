@@ -3,102 +3,81 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { ShoppingCart, Menu, X } from "lucide-react"
 import { useCartStore } from "@/lib/cart-store"
 
 export function Navigation() {
   const pathname = usePathname()
-  const [datetime, setDatetime] = useState("")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const itemCount = useCartStore((state) => state.itemCount)
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date()
-      const month = String(now.getMonth() + 1).padStart(2, "0")
-      const day = String(now.getDate())
-      const hours = String(now.getHours()).padStart(2, "0")
-      const minutes = String(now.getMinutes()).padStart(2, "0")
-      setDatetime(`${month}' ${day}  ${hours}:${minutes}`)
-    }
-
-    updateTime()
-    const interval = setInterval(updateTime, 60000)
-    return () => clearInterval(interval)
-  }, [])
-
   const links = [
-    { href: "/efforts", label: "Efforts" },
-    { href: "/blog", label: "Blog" },
+    { href: "/efforts", label: "Work" },
+    { href: "/blog", label: "Writing" },
     { href: "/guestbook", label: "Guestbook" },
   ]
 
+  const shopLink = (
+    <Link
+      href="/shop"
+      aria-label="Shop"
+      className={cn(
+        "relative inline-flex items-center transition-colors hover:text-foreground",
+        pathname === "/shop" ? "text-foreground" : "text-muted-foreground",
+      )}
+    >
+      <ShoppingCart className="h-[17px] w-[17px]" strokeWidth={1.7} />
+      {itemCount > 0 && <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-[#ff6321]" />}
+      <span className="sr-only">Shop</span>
+    </Link>
+  )
+
   return (
-    <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto max-w-4xl px-6 py-4">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="text-lg font-medium tracking-tight hover:text-muted-foreground transition-colors">
-            Aggieson
+    <nav className="border-b border-border bg-background">
+      <div className="mx-auto max-w-3xl px-6">
+        <div className="flex h-[68px] items-center justify-between">
+          <Link
+            href="/"
+            className="text-[15px] font-semibold tracking-[-0.04em] transition-colors hover:text-muted-foreground"
+          >
+            Aggieson<span className="text-[#ff6321]">.</span>
           </Link>
 
-          <div className="hidden md:block absolute left-1/2 -translate-x-1/2 text-sm text-muted-foreground font-mono">
-            {datetime}
+          <div className="hidden items-center gap-6 md:flex">
+            <ul className="flex items-center gap-6">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      "text-[13px] transition-colors hover:text-foreground",
+                      pathname === link.href ? "font-medium text-foreground" : "text-muted-foreground",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            {shopLink}
           </div>
 
-          <ul className="hidden md:flex items-center gap-6">
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={cn(
-                    "text-sm transition-colors hover:text-foreground",
-                    pathname === link.href ? "text-foreground font-medium" : "text-muted-foreground",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link
-                href="/shop"
-                className={cn(
-                  "transition-colors hover:text-foreground relative",
-                  pathname === "/shop" ? "text-foreground" : "text-muted-foreground",
-                )}
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {itemCount > 0 && <span className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full" />}
-                <span className="sr-only">Shop</span>
-              </Link>
-            </li>
-          </ul>
-
-          <div className="flex md:hidden items-center gap-4">
-            <Link
-              href="/shop"
-              className={cn(
-                "transition-colors hover:text-foreground relative",
-                pathname === "/shop" ? "text-foreground" : "text-muted-foreground",
-              )}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && <span className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full" />}
-              <span className="sr-only">Shop</span>
-            </Link>
+          <div className="flex items-center gap-4 md:hidden">
+            {shopLink}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Toggle menu"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-border">
+          <div className="border-t border-border py-4 md:hidden">
             <ul className="flex flex-col gap-4">
               {links.map((link) => (
                 <li key={link.href}>
@@ -106,8 +85,8 @@ export function Navigation() {
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "text-base transition-colors hover:text-foreground block",
-                      pathname === link.href ? "text-foreground font-medium" : "text-muted-foreground",
+                      "block text-sm transition-colors hover:text-foreground",
+                      pathname === link.href ? "font-medium text-foreground" : "text-muted-foreground",
                     )}
                   >
                     {link.label}
