@@ -33,14 +33,36 @@ export default async function HomePage() {
       <div className="space-y-12 md:space-y-16">
         <section aria-labelledby="intro-heading" className="space-y-3">
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Designer · Creator · Curious human</p>
             <h1 id="intro-heading" className="text-4xl font-medium tracking-[-0.055em] md:text-5xl">
               Aggieson
             </h1>
-            <p className="max-w-xl text-base leading-6 text-muted-foreground">
-              People, places & moments. Helping people set up podcasts, usually with a camera nearby.
-              I share the things I make, notice, and learn along the way.
-            </p>
+            <div className="max-w-xl space-y-3 text-base leading-6 text-muted-foreground">
+              <p>
+                Human designer. Currently at{" "}
+                <a
+                  href="https://www.toothless.design"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+                >
+                  Toothless
+                </a>{" "}
+                working on identities and systems — crafting interfaces and building design tooling.
+              </p>
+              <p>
+                I enjoy making useful things and care a lot about making them feel simple and considered.
+              </p>
+              <p>
+                Contact me by{" "}
+                <a
+                  href="mailto:hello@"
+                  className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+                >
+                  email
+                </a>
+                .
+              </p>
+            </div>
           </div>
         </section>
 
