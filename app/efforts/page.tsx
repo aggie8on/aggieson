@@ -39,20 +39,20 @@ export default function EffortsPage() {
 
   return (
     <>
-      <main className="mx-auto w-full max-w-5xl px-6 pb-24 pt-12 md:pt-16">
-        <div className="mb-8">
+      <main className="mx-auto w-full max-w-5xl px-5 pb-16 pt-8 sm:px-6 md:pt-10">
+        <div className="mb-5">
           <Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link>
         </div>
-        <div className="space-y-10">
-          <header className="max-w-2xl space-y-3">
+        <div className="space-y-7">
+          <header className="max-w-2xl space-y-2">
             <p className="text-sm text-muted-foreground">Selected work</p>
-            <h1 className="text-4xl font-medium tracking-[-0.05em] md:text-5xl">Projects & explorations</h1>
-            <p className="text-base leading-7 text-muted-foreground">
+            <h1 className="text-3xl font-medium tracking-[-0.045em] md:text-4xl">Projects & explorations</h1>
+            <p className="text-sm leading-6 text-muted-foreground">
               A selection of things I have made, explored, and learned from.
             </p>
           </header>
 
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => (
               <button
                 key={project.id}
@@ -70,7 +70,7 @@ export default function EffortsPage() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 </span>
-                <span className="mt-3 flex items-baseline justify-between gap-3">
+                <span className="mt-2 flex items-baseline justify-between gap-3">
                   <span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">{project.title}</span>
                   <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{project.year}</span>
                 </span>
