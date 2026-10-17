@@ -17,7 +17,8 @@ export default async function LifePage() {
     // Empty state stays useful while the database is being connected.
   }
 
-  const groups = [...new Set(items.map((item) => item.category || itemTypeLabels[item.item_type] || "Life"))]
+  const groupFor = (item: PortfolioItem) => item.item_type === "wishlist" && item.is_owned ? "My setup" : item.category || itemTypeLabels[item.item_type] || "Life"
+  const groups = [...new Set(items.map(groupFor))]
   return (
     <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
       <section className="space-y-4">
@@ -36,11 +37,11 @@ export default async function LifePage() {
             <section key={group} className="space-y-4">
               <h2 className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{group}</h2>
               <div className="divide-y divide-border border-y border-border">
-                {items.filter((item) => (item.category || itemTypeLabels[item.item_type] || "Life") === group).map((item) => (
+                {items.filter((item) => groupFor(item) === group).map((item) => (
                   <article key={item.id} className="py-5">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-5">
                       <Link href={`/life/${item.slug}`} className="text-base font-medium tracking-[-0.025em] transition-colors hover:text-muted-foreground">{item.title}</Link>
-                      <span className="shrink-0 text-xs text-muted-foreground">{itemTypeLabels[item.item_type] ?? item.category}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">{item.item_type === "wishlist" && item.is_owned ? "In my setup" : itemTypeLabels[item.item_type] ?? item.category}</span>
                     </div>
                     {item.excerpt && <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.excerpt}</p>}
                     {item.item_type === "wishlist" && <p className="mt-2 text-xs text-muted-foreground">{item.is_owned ? "In my setup" : "On the wishlist"}</p>}
