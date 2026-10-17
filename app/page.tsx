@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { ArrowUpRight, Download } from "lucide-react"
-import { Navigation } from "@/components/navigation"
 import { blogPosts } from "@/lib/blog-data"
 
 const selectedWork = [
@@ -17,7 +16,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Navigation />
       <main className="mx-auto w-full max-w-3xl px-6 pb-24 pt-16 md:pt-24">
         <div className="space-y-20 md:space-y-24">
           <section aria-labelledby="intro-heading" className="space-y-7">
