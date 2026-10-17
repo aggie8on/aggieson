@@ -12,7 +12,7 @@ const types = Object.entries(itemTypeLabels)
 type EditorState = { id?: string; title: string; slug: string; item_type: string; category: string; excerpt: string; body: string; cover_image_url: string; external_url: string; published: boolean; featured: boolean; is_owned: boolean; sort_order: number }
 const blankItem: EditorState = { title: "", slug: "", item_type: "note", category: "Notes", excerpt: "", body: "", cover_image_url: "", external_url: "", published: false, featured: false, is_owned: false, sort_order: 0 }
 
-export default function StudioPage() {
+export function StudioDashboard() {
   const router = useRouter()
   const [items, setItems] = useState<PortfolioItem[]>([])
   const [editor, setEditor] = useState<EditorState>(blankItem)
