@@ -4,14 +4,6 @@ import { Navigation } from "@/components/navigation"
 import Link from "next/link"
 import { blogPosts } from "@/lib/blog-data"
 
-interface BlogPost {
-  slug: string
-  title: string
-  excerpt: string
-  date: string
-  readTime: string
-}
-
 export default function BlogPage() {
   const postsArray = Object.values(blogPosts).sort((a, b) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -20,30 +12,31 @@ export default function BlogPage() {
   return (
     <>
       <Navigation />
-      <main className="mx-auto max-w-2xl px-6 py-16 md:py-24">
+      <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
         <div className="space-y-12">
           <section className="space-y-4">
-            <h1 className="text-4xl font-medium tracking-tight">Blog</h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              I effortlessly share my thoughts in a calm & dustless space.
+            <p className="text-sm text-muted-foreground">Notes & ideas</p>
+            <h1 className="text-4xl font-medium tracking-[-0.05em] md:text-5xl">Writing</h1>
+            <p className="max-w-xl text-base leading-7 text-muted-foreground">
+              Thoughts on communication, perspective, and the things I notice along the way.
             </p>
           </section>
 
-          <div className="space-y-8">
+          <div className="divide-y divide-border border-y border-border">
             {postsArray.map((post) => (
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="block group space-y-2 py-4 border-b border-border last:border-0"
+                className="group block py-5 transition-colors"
               >
-                <div className="flex items-baseline justify-between gap-4">
-                  <h2 className="text-xl font-medium group-hover:text-muted-foreground transition-colors">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                  <h2 className="text-base font-medium tracking-[-0.025em] transition-colors group-hover:text-muted-foreground">
                     {post.title}
                   </h2>
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">{post.date}</span>
+                  <span className="shrink-0 text-sm text-muted-foreground">{post.date}</span>
                 </div>
-                <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
-                <span className="text-sm text-muted-foreground">{post.readTime}</span>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+                <span className="mt-2 block text-xs text-muted-foreground">{post.readTime}</span>
               </Link>
             ))}
           </div>
