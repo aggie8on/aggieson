@@ -41,7 +41,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-3 md:p-6"
       onClick={onClose}
     >
       <div
@@ -53,7 +53,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-6 py-3 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-5 py-2.5 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
             <h2 id="project-modal-title" className="text-base md:text-lg font-medium tracking-[-0.02em]">{project.title}</h2>
             <span className="text-sm text-muted-foreground">• {project.year}</span>
