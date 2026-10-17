@@ -1,8 +1,8 @@
 "use client"
 
 import { Navigation } from "@/components/navigation"
-import { ProjectCard } from "@/components/project-card"
 import { ProjectModal } from "@/components/project-modal"
+import { ArrowUpRight } from "lucide-react"
 import { useState } from "react"
 
 export interface Project {
@@ -28,7 +28,7 @@ const projects: Project[] = [
   {
     id: "2",
     title: "Ear(Open) Concept",
-    description: "Revolutionary open-ear audio technology that balances awareness with immersive sound.",
+    description: "Open-ear audio technology designed to balance awareness with an immersive listening experience.",
     year: "2024",
     category: "Audio Design",
     image: "/efforts/ear-open.jpg",
@@ -37,7 +37,7 @@ const projects: Project[] = [
   {
     id: "3",
     title: "Snarl",
-    description: "An aggressive yet elegant exploration of form and function in consumer electronics.",
+    description: "An exploration of form and function in consumer electronics.",
     year: "2023",
     category: "Concept Design",
     image: "/efforts/snarl.jpg",
@@ -46,7 +46,7 @@ const projects: Project[] = [
   {
     id: "4",
     title: "Skarper",
-    description: "Revolutionary e-bike conversion system that transforms any bicycle into an electric vehicle.",
+    description: "An e-bike conversion system that transforms a bicycle into an electric vehicle.",
     year: "2023",
     category: "Mobility",
     image: "/efforts/skarper.jpg",
@@ -55,7 +55,7 @@ const projects: Project[] = [
   {
     id: "5",
     title: "Inaya",
-    description: "A thoughtful wellness device designed to support mental health and mindfulness practices.",
+    description: "A wellness concept designed around mindfulness and everyday care.",
     year: "2023",
     category: "Wellness",
     image: "/efforts/inaya.jpg",
@@ -64,7 +64,7 @@ const projects: Project[] = [
   {
     id: "6",
     title: "taschlight",
-    description: "Portable lighting solution that merges functionality with minimalist aesthetic.",
+    description: "A portable lighting concept focused on function and minimal form.",
     year: "2022",
     category: "Lighting",
     image: "/efforts/taschlight.jpg",
@@ -73,7 +73,7 @@ const projects: Project[] = [
   {
     id: "7",
     title: "Superstitious Objects",
-    description: "Exploring the intersection of belief, ritual, and everyday objects in modern life.",
+    description: "An exploration of belief, ritual, and everyday objects.",
     year: "2022",
     category: "Concept Design",
     image: "/efforts/superstitious.jpg",
@@ -82,7 +82,7 @@ const projects: Project[] = [
   {
     id: "8",
     title: "Somvai",
-    description: "Optimize your naps to be more productive with this innovative wellness device.",
+    description: "A concept exploring how rest and short naps can fit into daily life.",
     year: "2023",
     category: "Wellness",
     image: "/efforts/somvai.jpg",
@@ -96,23 +96,35 @@ export default function EffortsPage() {
   return (
     <>
       <Navigation />
-      <main className="mx-auto max-w-6xl px-6 py-16 md:py-24">
-        <div className="space-y-12">
-          <section className="space-y-4">
-            <h1 className="text-4xl font-medium tracking-tight text-balance">Efforts</h1>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-              A collection of projects exploring design, innovation, and the spaces in between.
+      <main className="mx-auto w-full max-w-3xl px-6 pb-24 pt-16 md:pt-24">
+        <div className="space-y-10">
+          <header className="space-y-3">
+            <p className="text-sm text-muted-foreground">Selected work</p>
+            <h1 className="text-4xl font-medium tracking-[-0.045em] md:text-5xl">Projects & explorations</h1>
+            <p className="max-w-xl text-base leading-7 text-muted-foreground">
+              A selection of ideas and projects across product, audio, mobility, and everyday objects.
+              Select a project to see more.
             </p>
-          </section>
+          </header>
 
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3">
+          <div className="divide-y divide-border border-y border-border">
             {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} onClick={() => setSelectedProject(project)} />
+              <button
+                key={project.id}
+                type="button"
+                onClick={() => setSelectedProject(project)}
+                className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-4 text-left transition-colors hover:text-muted-foreground sm:grid-cols-[minmax(0,1fr)_140px_48px_16px]"
+              >
+                <span className="font-medium tracking-[-0.02em]">{project.title}</span>
+                <span className="hidden text-sm text-muted-foreground sm:block">{project.category}</span>
+                <span className="text-right text-sm tabular-nums text-muted-foreground">{project.year}</span>
+                <ArrowUpRight className="hidden h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 sm:block" strokeWidth={1.6} />
+                <span className="col-span-2 text-xs text-muted-foreground sm:hidden">{project.category}</span>
+              </button>
             ))}
           </div>
         </div>
       </main>
-
       <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
     </>
   )
