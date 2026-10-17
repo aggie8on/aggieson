@@ -3,7 +3,7 @@
 import { Navigation } from "@/components/navigation"
 import { ProjectModal } from "@/components/project-modal"
 import { ArrowUpRight } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export interface Project {
   id: string
@@ -93,6 +93,34 @@ const projects: Project[] = [
 export default function EffortsPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
+  useEffect(() => {
+    const projectId = new URLSearchParams(window.location.search).get("project")
+    if (!projectId) return
+
+    const project = projects.find((item) => item.id === projectId)
+    if (project) {
+      setSelectedProject(project)
+    } else {
+      const url = new URL(window.location.href)
+      url.searchParams.delete("project")
+      window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
+    }
+  }, [])
+
+  const openProject = (project: Project) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set("project", project.id)
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
+    setSelectedProject(project)
+  }
+
+  const closeProject = () => {
+    const url = new URL(window.location.href)
+    url.searchParams.delete("project")
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
+    setSelectedProject(null)
+  }
+
   return (
     <>
       <Navigation />
@@ -112,7 +140,7 @@ export default function EffortsPage() {
               <button
                 key={project.id}
                 type="button"
-                onClick={() => setSelectedProject(project)}
+                onClick={() => openProject(project)}
                 aria-label={`View ${project.title} project details`}
                 className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2 py-5 text-left transition-colors hover:text-muted-foreground sm:grid-cols-[minmax(0,1fr)_116px_42px_16px] sm:items-center"
               >
@@ -133,7 +161,7 @@ export default function EffortsPage() {
           </div>
         </div>
       </main>
-      <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+      <ProjectModal project={selectedProject} onClose={closeProject} />
     </>
   )
 }
