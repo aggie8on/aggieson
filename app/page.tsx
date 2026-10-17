@@ -93,6 +93,14 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section aria-labelledby="life-heading" className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-baseline sm:justify-between">
+          <div className="space-y-1">
+            <h2 id="life-heading" className="text-sm font-medium">A little beyond the work</h2>
+            <p className="text-sm text-muted-foreground">Recipes, playlists, useful finds, and small notes from everyday life.</p>
+          </div>
+          <Link href="/life" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">Explore life <ArrowUpRight size={13} strokeWidth={1.7} /></Link>
+        </section>
+
         <section id="contact" aria-labelledby="contact-heading" className="flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">
             <h2 id="contact-heading" className="text-xl font-medium tracking-tight">Have something in mind?</h2>
