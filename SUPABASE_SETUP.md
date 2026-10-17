@@ -3,7 +3,7 @@
 The aggieson-portfolio Supabase project powers /life and /studio.
 
 ## Environment variables
-Set these in Vercel for Production, Preview, and Development:
+The application includes safe public defaults for this project, so the site can connect even before environment variables are configured. For easier future project switching, you can optionally set these in Vercel for Production, Preview, and Development:
 - NEXT_PUBLIC_SUPABASE_URL: the project API URL shown in Supabase project settings.
 - NEXT_PUBLIC_SUPABASE_ANON_KEY: the project's publishable key.
 
