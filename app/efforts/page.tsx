@@ -96,14 +96,14 @@ export default function EffortsPage() {
   return (
     <>
       <Navigation />
-      <main className="mx-auto w-full max-w-3xl px-6 pb-24 pt-16 md:pt-24">
+      <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
         <div className="space-y-10">
-          <header className="space-y-3">
+          <header className="space-y-4">
             <p className="text-sm text-muted-foreground">Selected work</p>
-            <h1 className="text-4xl font-medium tracking-[-0.045em] md:text-5xl">Projects & explorations</h1>
+            <h1 className="text-4xl font-medium tracking-[-0.05em] md:text-5xl">Projects & explorations</h1>
             <p className="max-w-xl text-base leading-7 text-muted-foreground">
-              A selection of ideas and projects across product, audio, mobility, and everyday objects.
-              Select a project to see more.
+              A selection of ideas across product, audio, mobility, wellness, and everyday objects.
+              Select a project to view its images and details.
             </p>
           </header>
 
@@ -113,13 +113,21 @@ export default function EffortsPage() {
                 key={project.id}
                 type="button"
                 onClick={() => setSelectedProject(project)}
-                className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-4 text-left transition-colors hover:text-muted-foreground sm:grid-cols-[minmax(0,1fr)_140px_48px_16px]"
+                aria-label={`View ${project.title} project details`}
+                className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2 py-5 text-left transition-colors hover:text-muted-foreground sm:grid-cols-[minmax(0,1fr)_116px_42px_16px] sm:items-center"
               >
-                <span className="font-medium tracking-[-0.02em]">{project.title}</span>
+                <span className="min-w-0 space-y-1">
+                  <span className="block font-medium tracking-[-0.025em] text-foreground transition-colors group-hover:text-muted-foreground">
+                    {project.title}
+                  </span>
+                  <span className="block max-w-lg text-sm leading-6 text-muted-foreground">
+                    {project.description}
+                  </span>
+                  <span className="block text-xs text-muted-foreground sm:hidden">{project.category}</span>
+                </span>
                 <span className="hidden text-sm text-muted-foreground sm:block">{project.category}</span>
-                <span className="text-right text-sm tabular-nums text-muted-foreground">{project.year}</span>
-                <ArrowUpRight className="hidden h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 sm:block" strokeWidth={1.6} />
-                <span className="col-span-2 text-xs text-muted-foreground sm:hidden">{project.category}</span>
+                <span className="pt-0.5 text-right text-sm tabular-nums text-muted-foreground sm:pt-0">{project.year}</span>
+                <ArrowUpRight className="mt-1 h-3.5 w-3.5 text-muted-foreground sm:mt-0" strokeWidth={1.6} />
               </button>
             ))}
           </div>
