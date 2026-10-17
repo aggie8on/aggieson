@@ -16,17 +16,17 @@ export default async function LifeItemPage({ params }: { params: Promise<{ slug:
   const item = data as PortfolioItem
   const body = typeof item.content?.body === "string" ? item.content.body : ""
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
-      <nav aria-label="Breadcrumb" className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-2">
+    <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-12 sm:px-6 md:pt-16">
+      <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2">
         <Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link>
         <Link href="/life" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"><ArrowLeft size={14} /> Back to life</Link>
       </nav>
-      <article className="mt-10">
+      <article className="mt-7">
         <p className="text-sm text-muted-foreground">{item.category} · {item.item_type.replace("-", " ")}</p>
-        <h1 className="mt-3 text-4xl font-medium tracking-[-0.05em] md:text-5xl">{item.title}</h1>
-        {item.excerpt && <p className="mt-5 text-lg leading-8 text-muted-foreground">{item.excerpt}</p>}
-        {item.cover_image_url && <img src={item.cover_image_url} alt="" className="mt-8 max-h-[560px] w-full rounded-md object-cover" />}
-        {body && <div className="prose prose-neutral mt-10 max-w-none whitespace-pre-wrap text-base leading-8 dark:prose-invert">{body}</div>}
+        <h1 className="mt-3 text-3xl font-medium tracking-[-0.045em] md:text-4xl">{item.title}</h1>
+        {item.excerpt && <p className="mt-3 text-base leading-6 text-muted-foreground">{item.excerpt}</p>}
+        {item.cover_image_url && <img src={item.cover_image_url} alt="" className="mt-6 max-h-[480px] w-full object-cover" />}
+        {body && <div className="prose prose-neutral mt-7 max-w-none whitespace-pre-wrap text-[15px] leading-7 dark:prose-invert">{body}</div>}
         {item.external_url && <a href={item.external_url} target="_blank" rel="noreferrer" className="mt-8 inline-flex items-center gap-2 text-sm underline underline-offset-4">Visit link <ArrowUpRight size={14} /></a>}
       </article>
     </main>
