@@ -1,7 +1,7 @@
 "use client"
 
-import { Navigation } from "@/components/navigation"
 import { ProjectModal } from "@/components/project-modal"
+import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -40,8 +40,8 @@ export default function EffortsPage() {
 
   return (
     <>
-      <Navigation />
       <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
+        <div className="mb-8"><Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link></div>
         <div className="space-y-10">
           <header className="space-y-4">
             <p className="text-sm text-muted-foreground">Selected work</p>
