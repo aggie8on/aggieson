@@ -8,6 +8,7 @@ export default function BlogPage() {
 
   return (
       <main className="mx-auto w-full max-w-2xl px-6 pb-24 pt-20 md:pt-28">
+        <div className="mb-8"><Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link></div>
         <div className="space-y-12">
           <section className="space-y-4">
             <p className="text-sm text-muted-foreground">Notes & ideas</p>
