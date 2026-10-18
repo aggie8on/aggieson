@@ -101,7 +101,7 @@
 }
 
 @layer base {
-  * { @apply border-border outline-ring/50; }
+  * { @apply border-border outline-ring/50; font-family: inherit; }
   html {
     font-family: var(--font-manrope), "Manrope", sans-serif;
     text-rendering: optimizeLegibility;
