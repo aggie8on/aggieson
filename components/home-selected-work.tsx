@@ -19,7 +19,7 @@ export function HomeSelectedWork({ title = "Selected projects" }: { title?: stri
     <>
       <section aria-labelledby="projects-heading" className="space-y-3">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 id="projects-heading" className="text-sm font-medium text-muted-foreground">{title}</h2>
+          <h2 id="projects-heading" className="text-sm font-medium text-muted-foreground">Work</h2>
           <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
             All projects <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
