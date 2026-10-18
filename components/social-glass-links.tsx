@@ -1,6 +1,6 @@
 "use client"
 
-import { Instagram, Linkedin, Moon, Sun } from "lucide-react"
+import { Instagram, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 
@@ -11,7 +11,6 @@ function XIcon() {
 const links = [
   { label: "X", href: "https://x.com/aggie8on", icon: "x" },
   { label: "Instagram", href: "https://www.instagram.com/aggie8on/", icon: "instagram" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/", icon: "linkedin" },
 ]
 
 export function SocialGlassLinks() {
@@ -23,7 +22,7 @@ export function SocialGlassLinks() {
 
   return <nav aria-label="Social links and appearance" className="flex shrink-0 items-center gap-1">
     {links.map((link) => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} title={link.label} className={iconClass}>
-      {link.icon === "x" ? <XIcon /> : link.icon === "instagram" ? <Instagram size={14} strokeWidth={1.6} /> : <Linkedin size={14} strokeWidth={1.6} />}
+      {link.icon === "x" ? <XIcon /> : <Instagram size={14} strokeWidth={1.6} />}
     </a>)}
     <span aria-hidden="true" className="mx-1 h-4 w-px bg-border" />
     <button type="button" onClick={() => setTheme(isDark ? "light" : "dark")} aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle color theme"} title={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle color theme"} className={iconClass}>
