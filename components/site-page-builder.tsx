@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { ArrowDown, ArrowLeft, ArrowUp, Eye, EyeOff, ImagePlus, LayoutTemplate, Plus, Save, Trash2 } from "lucide-react"
+import { ArrowLeft, ArrowUp, Eye, EyeOff, ImagePlus, LayoutTemplate, Plus, Save, Trash2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { defaultSitePages, normalizeSections, type SitePage, type SiteSection, type SiteSectionType } from "@/lib/site-pages"
 
