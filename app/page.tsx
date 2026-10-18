@@ -32,7 +32,7 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-5 pb-16 pt-12 sm:px-6 md:pt-16">
+    <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-10 sm:px-6 md:pt-14">
       <HomePageSections sections={sections} posts={latestPosts} lifeItems={lifeItems} />
     </main>
   )
