@@ -39,7 +39,7 @@ export function HomePageSections({ sections, posts, lifeItems }: { sections: Sit
             </section>
           )
         }
-        if (section.type === "projects") return <div key={section.id}><HomeSelectedWork title={section.title || "Selected projects"} /></div>
+        if (section.type === "projects") return <div key={section.id}><HomeSelectedWork /></div>
         if (section.type === "writing") {
           return (
             <section key={section.id} className={sectionSpacing(section.layout)}>
