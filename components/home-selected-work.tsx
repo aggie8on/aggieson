@@ -28,7 +28,7 @@ export function HomeSelectedWork() {
   return (
     <>
       <section aria-label="Selected work" className="space-y-4">
-        <div className="flex justify-end">
+        <div className="flex justify-start">
           <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
             All projects <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
