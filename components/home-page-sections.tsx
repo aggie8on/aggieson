@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { HomeSelectedWork } from "@/components/home-selected-work"
+import { SocialGlassLinks } from "@/components/social-glass-links"
 import { itemTypeLabels, type PortfolioItem } from "@/lib/life-content"
 import type { SiteSection } from "@/lib/site-pages"
 
@@ -25,6 +26,7 @@ export function HomePageSections({ sections, posts, lifeItems }: { sections: Sit
                 {section.text && <p className="text-base leading-6 text-muted-foreground">{section.text.split("Toothless").map((part, index, all) => <span key={index}>{part}{index < all.length - 1 && <a href="https://www.toothless.design" target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Toothless</a>}</span>)}</p>}
                 {section.body && <p className="text-base leading-6 text-muted-foreground">{section.body}</p>}
                 <p className="text-sm text-muted-foreground">Contact me by <a href="mailto:aggie8on@gmail.com" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">email</a>.</p>
+                <SocialGlassLinks />
               </div>
             </section>
           )
