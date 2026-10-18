@@ -12,11 +12,11 @@ pnpm dev
 ## Validation and production build
 
 ```bash
-pnpm run lint
+pnpm run typecheck
 pnpm run build
 ```
 
-The production build performs TypeScript validation. TypeScript build errors are not ignored.
+The typecheck script and production build both validate TypeScript. TypeScript build errors are not ignored. ESLint is not configured in this repository yet.
 
 ## Environment
 
