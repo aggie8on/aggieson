@@ -5,6 +5,7 @@ import { ArrowUpRight, X } from "lucide-react"
 import { itemTypeLabels, type PortfolioItem } from "@/lib/life-content"
 import type { SiteSection } from "@/lib/site-pages"
 import { InlineRichText } from "@/components/inline-rich-text"
+import { ContentMedia } from "@/components/content-media"
 
 export function LifeOverview({ items, sections }: { items: PortfolioItem[]; sections: SiteSection[] }) {
   const [openItem, setOpenItem] = useState<PortfolioItem | null>(null)
@@ -58,7 +59,7 @@ export function LifeOverview({ items, sections }: { items: PortfolioItem[]; sect
             <h2 id="life-dialog-title" className="mt-2 max-w-xl text-2xl font-medium tracking-[-0.045em] sm:text-3xl">{openItem.title}</h2>
             {openItem.excerpt && <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">{openItem.excerpt}</p>}
             {openItem.cover_image_url && <img src={openItem.cover_image_url} alt={openItem.title} className="mt-6 max-h-[420px] w-full rounded-lg object-cover" />}
-            {typeof openItem.content?.body === "string" && openItem.content.body && <div className="mt-6 whitespace-pre-wrap text-sm leading-7">{openItem.content.body}</div>}
+            {typeof openItem.content?.body === "string" && openItem.content.body && <div className="mt-6 whitespace-pre-wrap text-sm leading-7">{openItem.content.body}</div>}<ContentMedia type={typeof openItem.content?.media_type === "string" ? openItem.content.media_type : undefined} url={typeof openItem.content?.media_url === "string" ? openItem.content.media_url : undefined} title={openItem.title} />
             {openItem.external_url && <a href={openItem.external_url} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-1 text-sm underline decoration-border underline-offset-4 hover:decoration-foreground">Open link <ArrowUpRight size={13} /></a>}
             <div className="mt-8 border-t border-border pt-4"><button type="button" onClick={() => setOpenItem(null)} className="text-sm text-muted-foreground hover:text-foreground">Close</button></div>
           </div>
