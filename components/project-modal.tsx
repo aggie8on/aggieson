@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react"
 import { X } from "lucide-react"
 import Image from "next/image"
 import type { Project } from "@/lib/projects"
@@ -39,7 +39,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     return () => window.removeEventListener("keydown", handleEscape)
   }, [onClose, project])
 
-  function trapFocus(event: React.KeyboardEvent<HTMLDivElement>) {
+  function trapFocus(event: ReactKeyboardEvent<HTMLDivElement>) {
     if (event.key !== "Tab") return
     const dialog = dialogRef.current
     if (!dialog) return
