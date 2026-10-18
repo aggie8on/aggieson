@@ -14,6 +14,7 @@ export default async function LifePage() {
       supabase.from("portfolio_items")
         .select("id,title,slug,item_type,category,excerpt,content,cover_image_url,external_url,published,featured,is_owned,sort_order,published_at,created_at")
         .eq("published", true)
+        .neq("item_type", "writing")
         .order("sort_order", { ascending: true })
         .order("published_at", { ascending: false }),
       supabase.from("site_pages").select("sections").eq("slug", "life").maybeSingle(),
