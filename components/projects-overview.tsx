@@ -11,19 +11,30 @@ import { InlineRichText } from "@/components/inline-rich-text"
 export function ProjectsOverview({ sections }: { sections: SiteSection[] }) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   useEffect(() => {
-    const projectId = new URLSearchParams(window.location.search).get("project")
-    if (projectId) setSelectedProject(projects.find((item) => item.id === projectId) ?? null)
+    const syncProjectFromUrl = () => {
+      const projectId = new URLSearchParams(window.location.search).get("project")
+      setSelectedProject(projects.find((item) => item.id === projectId) ?? null)
+    }
+    syncProjectFromUrl()
+    window.addEventListener("popstate", syncProjectFromUrl)
+    return () => window.removeEventListener("popstate", syncProjectFromUrl)
   }, [])
+
   const openProject = (project: Project) => {
     const url = new URL(window.location.href)
     url.searchParams.set("project", project.id)
-    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
+    window.history.pushState({ ...window.history.state, projectModal: true }, "", `${url.pathname}${url.search}${url.hash}`)
     setSelectedProject(project)
   }
+
   const closeProject = () => {
+    if (window.history.state?.projectModal) {
+      window.history.back()
+      return
+    }
     const url = new URL(window.location.href)
     url.searchParams.delete("project")
-    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
+    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`)
     setSelectedProject(null)
   }
 
