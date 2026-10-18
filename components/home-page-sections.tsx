@@ -28,13 +28,12 @@ export function HomePageSections({ sections, posts, lifeItems }: { sections: Sit
                 </div>
                 <div className="min-w-0">
                   <h1 id={section.id + "-heading"} className="hero-name text-2xl font-medium leading-[1.2] tracking-[-0.045em] sm:text-[1.65rem]">{section.title || "Aggieson"}</h1>
-                  <p className="hero-role mt-1 text-sm leading-5 text-muted-foreground">Design engineer</p>
+                  <p className="hero-role mt-1 text-sm leading-5 text-muted-foreground">Human designer</p>
                 </div>
               </div>
               <div className={(section.layout === "split" ? "grid gap-4 sm:grid-cols-[1fr_0.8fr]" : "max-w-xl space-y-3") + " !mt-[60px]"}>
                 {section.text && <p className="text-sm leading-[1.65] text-muted-foreground">{section.text.replace(/^Human designer\.\s*/i, "").split("Toothless").map((part, index, all) => <span key={index}>{part}{index < all.length - 1 && <a href="https://www.toothless.design" target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Toothless</a>}</span>)}</p>}
                 {section.body && <p className="text-sm leading-[1.65] text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.body}</InlineRichText></p>}
-                <p className="text-sm text-muted-foreground">Contact me by <a href="mailto:aggie8on@gmail.com" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">email</a>.</p>
               </div>
             </section>
           )
