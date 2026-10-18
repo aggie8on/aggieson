@@ -8,32 +8,11 @@ import {
   CloudRain,
   CloudSnow,
   CloudSun,
-  Moon,
   Sun,
 } from "lucide-react"
-import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 
 type Weather = { temperature: number; code: number }
-
-function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  const isDark = mounted && resolvedTheme === "dark"
-
-  return (
-    <button
-      type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle color theme"}
-      title={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle color theme"}
-      className="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      {isDark ? <Sun size={13} strokeWidth={1.6} /> : <Moon size={13} strokeWidth={1.6} />}
-    </button>
-  )
-}
 
 function WeatherIcon({ code }: { code: number }) {
   const iconProps = { size: 13, strokeWidth: 1.5 }
@@ -89,7 +68,7 @@ function LocalConditions() {
   }, [])
 
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tabular-nums text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tabular-nums text-muted-foreground">
       <span>{time}</span>
       <span className="text-muted-foreground/60">EAT</span>
       <span>Mbale, Uganda</span>
@@ -105,10 +84,7 @@ export function Footer() {
     <footer className="mt-auto border-t border-border/70 bg-background">
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <LocalConditions />
-        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-          <span>Building, always.</span>
-          <ThemeToggle />
-        </div>
+        <span className="text-xs text-muted-foreground">Building, always.</span>
       </div>
     </footer>
   )
