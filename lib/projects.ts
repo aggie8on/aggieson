@@ -43,7 +43,7 @@ export const projects: Project[] = [
     year: "2023",
     category: "Mobility",
     image: "/efforts/skarper.jpg",
-    images: ["/efforts/skarper-1.jpg", "/efforts/skarper-2.jpg", "/efforts/skarper-3.jpg"],
+    images: ["/efforts/skarper-1.jpg", "/efforts/skarper-2.jpg"],
   },
   {
     id: "5",
@@ -52,7 +52,7 @@ export const projects: Project[] = [
     year: "2023",
     category: "Wellness",
     image: "/efforts/inaya.jpg",
-    images: ["/efforts/inaya-1.jpg", "/efforts/inaya-2.jpg", "/efforts/inaya-3.jpg"],
+    images: ["/efforts/inaya.jpg"],
   },
   {
     id: "6",
@@ -61,7 +61,7 @@ export const projects: Project[] = [
     year: "2022",
     category: "Lighting",
     image: "/efforts/taschlight.jpg",
-    images: ["/efforts/taschlight-1.jpg", "/efforts/taschlight-2.jpg", "/efforts/taschlight-3.jpg"],
+    images: ["/efforts/taschlight.jpg"],
   },
   {
     id: "7",
@@ -70,7 +70,7 @@ export const projects: Project[] = [
     year: "2022",
     category: "Concept Design",
     image: "/efforts/superstitious.jpg",
-    images: ["/efforts/superstitious-1.jpg", "/efforts/superstitious-2.jpg"],
+    images: ["/efforts/superstitious.jpg"],
   },
   {
     id: "8",
@@ -79,6 +79,6 @@ export const projects: Project[] = [
     year: "2023",
     category: "Wellness",
     image: "/efforts/somvai.jpg",
-    images: ["/efforts/somvai-1.jpg", "/efforts/somvai-2.jpg", "/efforts/somvai-3.jpg"],
+    images: ["/efforts/somvai.jpg"],
   },
 ]
