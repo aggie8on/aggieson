@@ -28,15 +28,15 @@ function ThemeToggle() {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle color theme"}
       title={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle color theme"}
-      className="inline-flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      {isDark ? <Sun size={14} strokeWidth={1.6} /> : <Moon size={14} strokeWidth={1.6} />}
+      {isDark ? <Sun size={13} strokeWidth={1.6} /> : <Moon size={13} strokeWidth={1.6} />}
     </button>
   )
 }
 
 function WeatherIcon({ code }: { code: number }) {
-  const iconProps = { size: 14, strokeWidth: 1.5 }
+  const iconProps = { size: 13, strokeWidth: 1.5 }
   if (code === 0) return <Sun {...iconProps} />
   if ([1, 2].includes(code)) return <CloudSun {...iconProps} />
   if (code === 3) return <Cloud {...iconProps} />
@@ -89,13 +89,12 @@ function LocalConditions() {
   }, [])
 
   return (
-    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] tabular-nums text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tabular-nums text-muted-foreground">
       <span>{time}</span>
-      <span aria-hidden="true" className="text-border">/</span>
+      <span className="text-muted-foreground/60">EAT</span>
       <span>Mbale, Uganda</span>
-      <span aria-hidden="true" className="text-border">/</span>
       <span className="inline-flex items-center gap-1.5" aria-label={weather ? `${Math.round(weather.temperature)} degrees Celsius in Mbale` : "Weather in Mbale loading"}>
-        {weather ? <><WeatherIcon code={weather.code} /><span>{Math.round(weather.temperature)}°C</span></> : <><CloudSun size={14} strokeWidth={1.5} /><span>--°C</span></>}
+        {weather ? <><WeatherIcon code={weather.code} /><span>{Math.round(weather.temperature)}°C</span></> : <><CloudSun size={13} strokeWidth={1.5} /><span>--°C</span></>}
       </span>
     </div>
   )
@@ -104,14 +103,11 @@ function LocalConditions() {
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-border/70 bg-background">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-5 py-5 sm:px-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <LocalConditions />
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <LocalConditions />
+        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          <span>Building, always.</span>
           <ThemeToggle />
-        </div>
-        <div className="flex flex-col gap-1 text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <span>People, places &amp; moments.</span>
-          <span>© 2026 Aggieson · Building, always.</span>
         </div>
       </div>
     </footer>
