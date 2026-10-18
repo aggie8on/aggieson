@@ -18,7 +18,7 @@ function CategoryIcon({ category }: { category: string }) {
   return <Sparkles {...props} />
 }
 
-export function HomeSelectedWork({ title = "Selected projects" }: { title?: string }) {
+export function HomeSelectedWork() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const closeProject = useCallback(() => setSelectedProject(null), [])
   const selectedProjects = selectedProjectIds
@@ -27,9 +27,8 @@ export function HomeSelectedWork({ title = "Selected projects" }: { title?: stri
 
   return (
     <>
-      <section aria-labelledby="projects-heading" className="space-y-4">
-        <div className="flex items-baseline justify-between gap-4">
-          <h2 id="projects-heading" className="text-sm font-medium text-muted-foreground">{title || "Work"}</h2>
+      <section aria-label="Selected work" className="space-y-4">
+        <div className="flex justify-end">
           <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
             All projects <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
