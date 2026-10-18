@@ -22,7 +22,7 @@ The migrations in supabase/migrations create portfolio_items, site_pages, row-le
 The signup form only allows the configured owner email, and database RLS independently checks the same email before allowing edits.
 
 ## Content model
-The Studio content editor supports writing, recipes, music, desk setup, wishlist, bookmarks, hidden gems, life log, notes, and custom types/categories. Save drafts, publish, attach an external URL, upload a cover image, or mark a wishlist item as owned. Published items appear on /life. The visual page builder at /studio/pages edits section order, visibility, text, images, and layout for the homepage, Projects page, and Life page. Layouts are stored in public.site_pages; only the configured owner can change them.
+The Studio content editor supports writing, recipes, music, desk setup, wishlist, bookmarks, hidden gems, life log, notes, and custom types/categories. Save drafts, publish, attach an external URL, upload a cover image, or mark a wishlist item as owned. Published items appear on /life. The visual page builder at /studio/pages edits section order, visibility, text, images, and layout for the homepage, Projects page, Writing archive, and Life page. Layouts are stored in public.site_pages; only the configured owner can change them.
 
 ## Verification checklist
 - Check the Vercel deployment/build after merging.
