@@ -36,10 +36,10 @@ export function HomeSelectedWork({ title = "Selected projects" }: { title?: stri
               <span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">
                 {project.title}
               </span>
-              <span className="col-span-2 flex items-baseline justify-between gap-4 text-sm text-muted-foreground sm:col-span-1 sm:col-start-2 sm:row-start-1">
+              <span className="col-span-2 text-sm leading-5 text-muted-foreground sm:col-span-1 sm:col-start-2 sm:row-start-1">
                 <span>{project.description}</span>
-                <span className="tabular-nums">{project.year}</span>
-              </span>
+                </span>
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground sm:col-start-3 sm:row-start-1">{project.year}</span>
             </button>
           ))}
         </div>
