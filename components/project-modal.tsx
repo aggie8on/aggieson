@@ -13,29 +13,54 @@ interface ProjectModalProps {
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    if (project) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = "unset"
-    }
+    if (!project) return
+
+    const previousOverflow = document.body.style.overflow
+    previouslyFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    document.body.style.overflow = "hidden"
+    dialogRef.current?.focus()
+
     return () => {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = previousOverflow
+      previouslyFocusedRef.current?.focus()
+      previouslyFocusedRef.current = null
     }
   }, [project])
 
   useEffect(() => {
-    if (project) dialogRef.current?.focus()
-  }, [project])
-
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+    if (!project) return
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose()
     }
     window.addEventListener("keydown", handleEscape)
     return () => window.removeEventListener("keydown", handleEscape)
-  }, [onClose])
+  }, [onClose, project])
+
+  function trapFocus(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "Tab") return
+    const dialog = dialogRef.current
+    if (!dialog) return
+    const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )).filter((element) => element.offsetParent !== null)
+    if (focusable.length === 0) {
+      event.preventDefault()
+      dialog.focus()
+      return
+    }
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && (document.activeElement === last || document.activeElement === dialog)) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
 
   if (!project) return null
 
@@ -52,6 +77,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         tabIndex={-1}
         className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background focus:outline-none"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={trapFocus}
       >
         <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-5 py-2.5 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
