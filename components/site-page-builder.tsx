@@ -9,6 +9,7 @@ import { defaultSitePages, normalizeSections, type SitePage, type SiteSection, t
 const pageChoices = [
   { slug: "home", label: "Homepage" },
   { slug: "projects", label: "Projects" },
+  { slug: "blog", label: "Writing" },
   { slug: "life", label: "Life" },
 ]
 const sectionChoices: { type: SiteSectionType; label: string }[] = [
