@@ -9,8 +9,8 @@ import { itemTypeLabels, slugify, type PortfolioItem } from "@/lib/life-content"
 
 const OWNER_EMAIL = "aggie8on@gmail.com"
 const types = Object.entries(itemTypeLabels)
-type EditorState = { id?: string; title: string; slug: string; item_type: string; category: string; excerpt: string; body: string; cover_image_url: string; external_url: string; media_type: "none" | "audio" | "gif" | "video"; media_url: string; published: boolean; featured: boolean; is_owned: boolean; sort_order: number }
-const blankItem: EditorState = { title: "", slug: "", item_type: "note", category: "Notes", excerpt: "", body: "", cover_image_url: "", external_url: "", media_type: "none", media_url: "", published: false, featured: false, is_owned: false, sort_order: 0 }
+type EditorState = { id?: string; title: string; slug: string; item_type: string; category: string; excerpt: string; body: string; cover_image_url: string; external_url: string; media_type: "none" | "audio" | "gif" | "video"; media_url: string; published: boolean; featured: boolean; is_owned: boolean; sort_order: number; published_at: string | null }
+const blankItem: EditorState = { title: "", slug: "", item_type: "note", category: "Notes", excerpt: "", body: "", cover_image_url: "", external_url: "", media_type: "none", media_url: "", published: false, featured: false, is_owned: false, sort_order: 0, published_at: null }
 
 export function StudioDashboard() {
   const router = useRouter()
@@ -33,7 +33,7 @@ export function StudioDashboard() {
   }, [router])
   useEffect(() => { void loadItems() }, [loadItems])
   function editItem(item: PortfolioItem) {
-    setEditor({ id: item.id, title: item.title, slug: item.slug, item_type: item.item_type, category: item.category, excerpt: item.excerpt ?? "", body: typeof item.content?.body === "string" ? item.content.body : "", cover_image_url: item.cover_image_url ?? "", external_url: item.external_url ?? "", media_type: ["audio", "gif", "video"].includes(String(item.content?.media_type)) ? item.content.media_type as "audio" | "gif" | "video" : "none", media_url: typeof item.content?.media_url === "string" ? item.content.media_url : "", published: item.published, featured: item.featured, is_owned: item.is_owned, sort_order: item.sort_order ?? 0 })
+    setEditor({ id: item.id, title: item.title, slug: item.slug, item_type: item.item_type, category: item.category, excerpt: item.excerpt ?? "", body: typeof item.content?.body === "string" ? item.content.body : "", cover_image_url: item.cover_image_url ?? "", external_url: item.external_url ?? "", media_type: ["audio", "gif", "video"].includes(String(item.content?.media_type)) ? item.content.media_type as "audio" | "gif" | "video" : "none", media_url: typeof item.content?.media_url === "string" ? item.content.media_url : "", published: item.published, featured: item.featured, is_owned: item.is_owned, sort_order: item.sort_order ?? 0, published_at: item.published_at ?? null })
     setNotice(""); window.scrollTo({ top: 0, behavior: "smooth" })
   }
   function update<K extends keyof EditorState>(key: K, value: EditorState[K]) { setEditor((current) => ({ ...current, [key]: value })) }
@@ -73,7 +73,7 @@ export function StudioDashboard() {
     if (!editor.title.trim()) { setNotice("Add a title first."); return }
     setSaving(true); setNotice("")
     const supabase = createClient()
-    const payload = { title: editor.title.trim(), slug: slugify(editor.slug || editor.title), item_type: editor.item_type, category: editor.category.trim() || itemTypeLabels[editor.item_type] || "Life", excerpt: editor.excerpt.trim(), content: { body: editor.body, ...(editor.media_type !== "none" && editor.media_url.trim() ? { media_type: editor.media_type, media_url: editor.media_url.trim() } : {}) }, cover_image_url: editor.cover_image_url.trim() || null, external_url: editor.external_url.trim() || null, published: editor.published, featured: editor.featured, is_owned: editor.is_owned, sort_order: Number(editor.sort_order) || 0, published_at: editor.published ? new Date().toISOString() : null }
+    const payload = { title: editor.title.trim(), slug: slugify(editor.slug || editor.title), item_type: editor.item_type, category: editor.category.trim() || itemTypeLabels[editor.item_type] || "Life", excerpt: editor.excerpt.trim(), content: { body: editor.body, ...(editor.media_type !== "none" && editor.media_url.trim() ? { media_type: editor.media_type, media_url: editor.media_url.trim() } : {}) }, cover_image_url: editor.cover_image_url.trim() || null, external_url: editor.external_url.trim() || null, published: editor.published, featured: editor.featured, is_owned: editor.is_owned, sort_order: Number(editor.sort_order) || 0, published_at: editor.published ? (editor.published_at || new Date().toISOString()) : null }
     const query = editor.id ? supabase.from("portfolio_items").update(payload).eq("id", editor.id) : supabase.from("portfolio_items").insert(payload)
     const { error } = await query
     if (error) setNotice(error.message)
