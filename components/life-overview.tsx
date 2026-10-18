@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { ArrowUpRight, X } from "lucide-react"
 import { itemTypeLabels, type PortfolioItem } from "@/lib/life-content"
 import type { SiteSection } from "@/lib/site-pages"
@@ -9,6 +9,8 @@ import { ContentMedia } from "@/components/content-media"
 
 export function LifeOverview({ items, sections }: { items: PortfolioItem[]; sections: SiteSection[] }) {
   const [openItem, setOpenItem] = useState<PortfolioItem | null>(null)
+  const dialogRef = useRef<HTMLElement | null>(null)
+  const triggerRef = useRef<HTMLElement | null>(null)
   const groups = useMemo(() => {
     const groupFor = (item: PortfolioItem) => item.item_type === "wishlist" && item.is_owned ? "My setup" : item.category || itemTypeLabels[item.item_type] || "Life"
     const names = [...new Set(items.map(groupFor))]
@@ -17,9 +19,45 @@ export function LifeOverview({ items, sections }: { items: PortfolioItem[]; sect
 
   useEffect(() => {
     if (!openItem) return
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") setOpenItem(null) }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    dialogRef.current?.focus()
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenItem(null)
+        return
+      }
+      if (event.key !== "Tab") return
+      const dialog = dialogRef.current
+      if (!dialog) return
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )).filter((element) => element.offsetParent !== null)
+      if (focusable.length === 0) {
+        event.preventDefault()
+        dialog.focus()
+        return
+      }
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && (document.activeElement === last || document.activeElement === dialog)) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
     document.addEventListener("keydown", onKeyDown)
-    return () => document.removeEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+      document.body.style.overflow = previousOverflow
+      triggerRef.current?.focus()
+      triggerRef.current = null
+    }
   }, [openItem])
 
   function renderLifeList(section: SiteSection) {
@@ -29,7 +67,7 @@ export function LifeOverview({ items, sections }: { items: PortfolioItem[]; sect
         {section.text && <p className="text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText></p>}
         {items.length === 0 ? <div className="border-y border-border py-6"><p className="text-sm leading-6 text-muted-foreground">A quiet corner for recipes, music, bookmarks, places worth finding, desk notes, and small things from everyday life. More soon.</p></div> : (
           <div className="space-y-8">
-            {groups.map((group) => <section key={group.name} className="space-y-3"><h3 className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{group.name}</h3><div className="divide-y divide-border border-y border-border">{group.items.map((item) => <button key={item.id} type="button" onClick={() => setOpenItem(item)} className="group flex w-full items-baseline justify-between gap-4 py-3 text-left"><span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">{item.title}{item.excerpt && <span className="mt-1 block max-w-xl text-sm font-normal leading-5 text-muted-foreground">{item.excerpt}</span>}</span><span className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground"><span>{item.item_type === "wishlist" && item.is_owned ? "In my setup" : itemTypeLabels[item.item_type] ?? item.category}</span><ArrowUpRight size={13} className="opacity-0 transition-opacity group-hover:opacity-100" /></span></button>)}</div></section>)}
+            {groups.map((group) => <section key={group.name} className="space-y-3"><h3 className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{group.name}</h3><div className="divide-y divide-border border-y border-border">{group.items.map((item) => <button key={item.id} type="button" onClick={(event) => { triggerRef.current = event.currentTarget; setOpenItem(item) }} className="group flex w-full items-baseline justify-between gap-4 py-3 text-left"><span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">{item.title}{item.excerpt && <span className="mt-1 block max-w-xl text-sm font-normal leading-5 text-muted-foreground">{item.excerpt}</span>}</span><span className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground"><span>{item.item_type === "wishlist" && item.is_owned ? "In my setup" : itemTypeLabels[item.item_type] ?? item.category}</span><ArrowUpRight size={13} className="opacity-0 transition-opacity group-hover:opacity-100" /></span></button>)}</div></section>)}
           </div>
         )}
       </section>
@@ -52,7 +90,7 @@ export function LifeOverview({ items, sections }: { items: PortfolioItem[]; sect
       </main>
 
       {openItem && <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/35 p-0 backdrop-blur-[3px] sm:items-center sm:p-6" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpenItem(null) }}>
-        <section role="dialog" aria-modal="true" aria-labelledby="life-dialog-title" className="relative max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border border-border bg-background shadow-2xl sm:rounded-2xl">
+        <section ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="life-dialog-title" className="relative max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border border-border bg-background shadow-2xl sm:rounded-2xl">
           <button type="button" onClick={() => setOpenItem(null)} aria-label="Close item" className="sticky top-3 float-right z-10 mr-3 mt-3 inline-flex size-9 items-center justify-center rounded-full border border-border bg-background/90 text-muted-foreground backdrop-blur hover:text-foreground"><X size={16} /></button>
           <div className="p-6 pt-7 sm:p-9">
             <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">{openItem.item_type === "wishlist" && openItem.is_owned ? "In my setup" : itemTypeLabels[openItem.item_type] ?? openItem.category}</p>
