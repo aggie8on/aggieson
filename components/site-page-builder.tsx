@@ -112,9 +112,10 @@ export function SitePageBuilder() {
     setNotice("Uploading image…")
     const supabase = createClient()
     const safeName = file.name.toLowerCase().replace(/[^a-z0-9.-]+/g, "-")
-    const { error } = await supabase.storage.from("portfolio-media").upload(`page-builder/${Date.now()}-${safeName}`, file, { upsert: false })
+    const path = `page-builder/${Date.now()}-${safeName}`
+    const { error } = await supabase.storage.from("portfolio-media").upload(path, file, { upsert: false })
     if (error) { setNotice(error.message); return }
-    const { data } = supabase.storage.from("portfolio-media").getPublicUrl(`page-builder/${Date.now()}-${safeName}`)
+    const { data } = supabase.storage.from("portfolio-media").getPublicUrl(path)
     updateSection("image", data.publicUrl)
     setNotice("Image uploaded.")
   }
