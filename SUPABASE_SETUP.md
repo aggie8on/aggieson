@@ -10,7 +10,7 @@ The application includes safe public defaults for this project, so the site can 
 These are public client configuration values. Never add a Supabase service-role or secret key to client code.
 
 ## Database and security
-The migrations in supabase/migrations create portfolio_items, site_pages, row-level security policies, and the public portfolio-media image bucket. The portfolio content and page-builder schema have been applied to the aggieson-portfolio Supabase project. Anonymous visitors can read published portfolio items and page layouts. Writes and media uploads are restricted by RLS to the owner email aggie8on@gmail.com.
+The migrations in supabase/migrations create portfolio_items, site_pages, row-level security policies, and the public portfolio-media bucket. The portfolio content, page-builder schema, and media upload limits have been applied to the aggieson-portfolio Supabase project. Anonymous visitors can read published portfolio items and page layouts. Writes and media uploads are restricted by RLS to the owner email aggie8on@gmail.com.
 
 ## First owner sign-in
 1. Open /studio/login.
@@ -22,7 +22,7 @@ The migrations in supabase/migrations create portfolio_items, site_pages, row-le
 The signup form only allows the configured owner email, and database RLS independently checks the same email before allowing edits.
 
 ## Content model
-The Studio content editor supports writing, recipes, music, desk setup, wishlist, bookmarks, hidden gems, life log, notes, and custom types/categories. Save drafts, publish, attach an external URL, upload a cover image, or mark a wishlist item as owned. Published items appear on /life. The visual page builder at /studio/pages edits section order, visibility, text, images, and layout for the homepage, Projects page, Writing archive, and Life page. Layouts are stored in public.site_pages; only the configured owner can change them.
+The Studio content editor supports writing, recipes, music, desk setup, wishlist, bookmarks, hidden gems, life log, notes, and custom types/categories. Save drafts, publish, attach an external URL, upload a cover image (10 MB UI limit), or attach audio, video, or GIF media (50 MB UI limit). The `portfolio-media` bucket accepts image, audio, and video MIME types up to 50 MB. Published items appear on /life. The visual page builder at /studio/pages edits section order, visibility, text, images, and layout for the homepage, Projects page, Writing archive, and Life page. Layouts are stored in public.site_pages; only the configured owner can change them.
 
 ## Verification checklist
 - Check the Vercel deployment/build after merging.
