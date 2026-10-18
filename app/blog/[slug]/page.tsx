@@ -1,31 +1,86 @@
+"use server"
+
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { BlogShare } from "@/components/blog-share"
-import { blogPosts } from "@/lib/blog-data"
+import { ContentMedia } from "@/components/content-media"
+import { blogPosts, type BlogPostData } from "@/lib/blog-data"
+import { createClient } from "@/lib/supabase/server"
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>
 }
 
+async function getCmsWriting(slug: string) {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase.from("portfolio_items")
+      .select("slug,title,excerpt,content,published_at,created_at")
+      .eq("slug", slug)
+      .eq("item_type", "writing")
+      .eq("published", true)
+      .maybeSingle()
+    return data
+  } catch {
+    return null
+  }
+}
+
+function cmsDate(value: string) {
+  return new Date(value).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params
-  const post = blogPosts[slug]
-
-  if (!post) {
-    return { title: "Writing not found | Aggieson" }
+  const staticPost = blogPosts[slug]
+  if (staticPost) {
+    return {
+      title: `${staticPost.title} | Aggieson`,
+      description: staticPost.content[0]?.slice(0, 160),
+    }
   }
 
+  const post = await getCmsWriting(slug)
+  if (!post) return { title: "Writing not found | Aggieson" }
+  const body = typeof post.content?.body === "string" ? post.content.body : ""
   return {
     title: `${post.title} | Aggieson`,
-    description: post.content[0]?.slice(0, 160),
+    description: (post.excerpt || body).slice(0, 160),
   }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const post = blogPosts[slug]
+  let post: BlogPostData | undefined = blogPosts[slug]
+  let mediaType: string | undefined
+  let mediaUrl: string | undefined
+
+  if (!post) {
+    const cmsPost = await getCmsWriting(slug)
+    if (!cmsPost) notFound()
+
+    const body = typeof cmsPost.content?.body === "string" ? cmsPost.content.body : ""
+    const paragraphs = body.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
+    if (paragraphs.length === 0 && cmsPost.excerpt) paragraphs.push(cmsPost.excerpt)
+    const wordCount = body.trim() ? body.trim().split(/\s+/).length : 0
+    const dateValue = cmsPost.published_at ?? cmsPost.created_at
+
+    post = {
+      slug: cmsPost.slug,
+      title: cmsPost.title,
+      date: cmsDate(dateValue),
+      readTime: `${Math.max(1, Math.ceil(wordCount / 200))} min read`,
+      content: paragraphs,
+    }
+    mediaType = typeof cmsPost.content?.media_type === "string" ? cmsPost.content.media_type : undefined
+    mediaUrl = typeof cmsPost.content?.media_url === "string" ? cmsPost.content.media_url : undefined
+  }
 
   if (!post) notFound()
 
@@ -47,20 +102,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </header>
 
         <BlogShare title={post.title} />
-
-        {post.audioUrl && (
-          <div className="rounded-lg bg-muted p-6">
-            <p className="mb-3 text-sm font-medium">Listen to this post</p>
-            <audio controls className="w-full">
-              <source src={post.audioUrl} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-        )}
+        <ContentMedia type={mediaType} url={mediaUrl} title={post.title} />
 
         <div className="prose prose-neutral dark:prose-invert max-w-none space-y-4 text-[15px]">
           {post.content.map((paragraph, index) => (
-            <p key={index} className="text-[15px] leading-7 text-foreground/90">
+            <p key={index} className="whitespace-pre-wrap text-[15px] leading-7 text-foreground/90">
               {paragraph}
             </p>
           ))}
@@ -75,9 +121,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <ArrowLeft className="h-4 w-4 shrink-0 transition-transform group-hover:-translate-x-1" />
               <span>{post.previousPost.title}</span>
             </Link>
-          ) : (
-            <span />
-          )}
+          ) : <span />}
           {post.nextPost ? (
             <Link
               href={`/blog/${post.nextPost.slug}`}
@@ -86,9 +130,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <span>{post.nextPost.title}</span>
               <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
             </Link>
-          ) : (
-            <span />
-          )}
+          ) : <span />}
         </nav>
       </article>
     </main>
