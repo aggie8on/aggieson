@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import type { Project } from "@/app/efforts/page"
+import type { Project } from "@/lib/projects"
 
 interface ProjectCardProps {
   project: Project
