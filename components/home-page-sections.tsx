@@ -22,12 +22,12 @@ export function HomePageSections({ sections, posts, lifeItems }: { sections: Sit
             <section key={section.id} aria-labelledby={section.id + "-heading"} className={sectionSpacing(section.layout)}>
               {section.eyebrow && <p className="text-sm text-muted-foreground">{section.eyebrow}</p>}
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <h1 id={section.id + "-heading"} className="text-4xl font-medium tracking-[-0.055em] md:text-5xl">{section.title || "Aggieson"}</h1>
+                <div className="min-w-0"><h1 id={section.id + "-heading"} className="text-[1.65rem] font-medium leading-tight tracking-[-0.045em] sm:text-[1.8rem]">{section.title || "Aggieson"}</h1><p className="mt-1 text-[0.95rem] leading-6 text-muted-foreground">Design engineer</p></div>
                 <SocialGlassLinks />
               </div>
               <div className={section.layout === "split" ? "grid gap-4 sm:grid-cols-[1fr_0.8fr]" : "max-w-xl space-y-3"}>
-                {section.text && <p className="text-base leading-6 text-muted-foreground">{section.text.split("Toothless").map((part, index, all) => <span key={index}>{part}{index < all.length - 1 && <a href="https://www.toothless.design" target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Toothless</a>}</span>)}</p>}
-                {section.body && <p className="text-base leading-6 text-muted-foreground">{section.body}</p>}
+                {section.text && <p className="text-[0.95rem] leading-[1.65] text-muted-foreground">{section.text.replace(/^Human designer\.\s*/i, "").split("Toothless").map((part, index, all) => <span key={index}>{part}{index < all.length - 1 && <a href="https://www.toothless.design" target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Toothless</a>}</span>)}</p>}
+                {section.body && <p className="text-[0.95rem] leading-[1.65] text-muted-foreground">{section.body}</p>}
                 <p className="text-sm text-muted-foreground">Contact me by <a href="mailto:aggie8on@gmail.com" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">email</a>.</p>
               </div>
             </section>
