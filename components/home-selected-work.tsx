@@ -8,7 +8,7 @@ import { projects, type Project } from "@/lib/projects"
 
 const selectedProjectIds = ["1", "2", "4", "5"]
 
-export function HomeSelectedWork() {
+export function HomeSelectedWork({ title = "Selected projects" }: { title?: string }) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const closeProject = useCallback(() => setSelectedProject(null), [])
   const selectedProjects = selectedProjectIds
@@ -17,11 +17,11 @@ export function HomeSelectedWork() {
 
   return (
     <>
-      <section aria-labelledby="work-heading" className="space-y-3">
+      <section aria-labelledby="projects-heading" className="space-y-3">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 id="work-heading" className="text-sm font-medium text-muted-foreground">Selected work</h2>
-          <Link href="/efforts" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
-            All work <ArrowUpRight size={13} strokeWidth={1.7} />
+          <h2 id="projects-heading" className="text-sm font-medium text-muted-foreground">{title}</h2>
+          <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
+            All projects <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
         </div>
         <div className="divide-y divide-border border-y border-border">
