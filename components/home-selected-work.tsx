@@ -19,7 +19,7 @@ export function HomeSelectedWork({ title = "Selected projects" }: { title?: stri
     <>
       <section aria-labelledby="projects-heading" className="space-y-3">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 id="projects-heading" className="text-sm font-medium text-muted-foreground">{title}</h2>
+          <h2 id="projects-heading" className="text-sm font-medium text-muted-foreground">Work</h2>
           <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
             All projects <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
@@ -31,15 +31,15 @@ export function HomeSelectedWork({ title = "Selected projects" }: { title?: stri
               type="button"
               onClick={() => setSelectedProject(project)}
               aria-label={`View ${project.title} project details`}
-              className="group flex w-full items-baseline justify-between gap-4 py-3 text-left"
+              className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 py-3 text-left sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
             >
               <span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">
                 {project.title}
               </span>
-              <span className="flex shrink-0 items-baseline gap-4 text-xs text-muted-foreground">
-                <span>{project.category}</span>
-                <span className="tabular-nums">{project.year}</span>
-              </span>
+              <span className="col-span-2 text-sm leading-5 text-muted-foreground sm:col-span-1 sm:col-start-2 sm:row-start-1">
+                <span>{project.description}</span>
+                </span>
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground sm:col-start-3 sm:row-start-1">{project.year}</span>
             </button>
           ))}
         </div>

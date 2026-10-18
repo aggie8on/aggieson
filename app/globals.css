@@ -128,3 +128,9 @@
     display: none !important;
   }
 }
+
+/* Neutral reference-inspired canvas; avoid pure black. */
+:root { --background: #f6f6f4; --foreground: #292929; --card: #f0f0ee; --card-foreground: #292929; --popover: #fafaf8; --popover-foreground: #292929; --border: #dededb; --input: #dededb; --muted-foreground: #747471; }
+.dark { --background: #191919; --foreground: #e8e8e5; --card: #222222; --card-foreground: #e8e8e5; --popover: #202020; --popover-foreground: #e8e8e5; --border: #363636; --input: #363636; --muted-foreground: #a2a29d; }
+html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { font-size: 15px; line-height: 1.6; }
