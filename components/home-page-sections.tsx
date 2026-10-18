@@ -22,7 +22,7 @@ export function HomePageSections({ sections, posts, lifeItems }: { sections: Sit
           return (
             <section key={section.id} aria-labelledby={section.id + "-heading"} className={sectionSpacing(section.layout)}>
               {section.eyebrow && <p className="text-sm text-muted-foreground">{section.eyebrow}</p>}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="order-first flex justify-end sm:order-last sm:justify-start">
                   <SocialGlassLinks />
                 </div>
