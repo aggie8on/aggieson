@@ -55,7 +55,7 @@ export default async function HomePage() {
               <p>
                 Contact me by{" "}
                 <a
-                  href="mailto:hello@"
+                  href="mailto:aggie8on@gmail.com"
                   className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
                 >
                   email
