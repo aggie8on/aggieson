@@ -4,80 +4,69 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.25 0 0);
-  --card: oklch(0.97 0 0);
-  --card-foreground: oklch(0.25 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0 0);
-  --primary: oklch(0.3 0 0);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.94 0 0);
-  --secondary-foreground: oklch(0.3 0 0);
-  --muted: oklch(0.55 0 0);
-  --muted-foreground: oklch(0.55 0 0);
-  --accent: oklch(0.92 0 0);
-  --accent-foreground: oklch(0.3 0 0);
+  --background: #f6f6f4;
+  --foreground: #292929;
+  --card: #f0f0ee;
+  --card-foreground: #292929;
+  --popover: #fafaf8;
+  --popover-foreground: #292929;
+  --primary: #292929;
+  --primary-foreground: #f6f6f4;
+  --secondary: #ededeb;
+  --secondary-foreground: #292929;
+  --muted: #747471;
+  --muted-foreground: #747471;
+  --accent: #ededeb;
+  --accent-foreground: #292929;
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.88 0 0);
-  --input: oklch(0.88 0 0);
-  --ring: oklch(0.4 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --destructive-foreground: #f6f6f4;
+  --border: #dededb;
+  --input: #dededb;
+  --ring: #747471;
+  --radius: 0.25rem;
+  --sidebar: #f6f6f4;
+  --sidebar-foreground: #292929;
+  --sidebar-primary: #292929;
+  --sidebar-primary-foreground: #f6f6f4;
+  --sidebar-accent: #ededeb;
+  --sidebar-accent-foreground: #292929;
+  --sidebar-border: #dededb;
+  --sidebar-ring: #747471;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.93 0 0);
-  --card: oklch(0.18 0 0);
-  --card-foreground: oklch(0.93 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.93 0 0);
-  --primary: oklch(0.93 0 0);
-  --primary-foreground: oklch(0.18 0 0);
-  --secondary: oklch(0.25 0 0);
-  --secondary-foreground: oklch(0.93 0 0);
-  --muted: oklch(0.5 0 0);
-  --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.22 0 0);
-  --accent-foreground: oklch(0.93 0 0);
+  --background: #191919;
+  --foreground: #e8e8e5;
+  --card: #222222;
+  --card-foreground: #e8e8e5;
+  --popover: #202020;
+  --popover-foreground: #e8e8e5;
+  --primary: #e8e8e5;
+  --primary-foreground: #191919;
+  --secondary: #292929;
+  --secondary-foreground: #e8e8e5;
+  --muted: #a2a29d;
+  --muted-foreground: #a2a29d;
+  --accent: #292929;
+  --accent-foreground: #e8e8e5;
   --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.93 0 0);
-  --border: oklch(0.25 0 0);
-  --input: oklch(0.25 0 0);
-  --ring: oklch(0.6 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --destructive-foreground: #e8e8e5;
+  --border: #363636;
+  --input: #363636;
+  --ring: #a2a29d;
+  --sidebar: #191919;
+  --sidebar-foreground: #e8e8e5;
+  --sidebar-primary: #e8e8e5;
+  --sidebar-primary-foreground: #191919;
+  --sidebar-accent: #292929;
+  --sidebar-accent-foreground: #e8e8e5;
+  --sidebar-border: #363636;
+  --sidebar-ring: #a2a29d;
 }
 
 @theme inline {
-  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
-  --font-sans: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --font-sans: var(--font-manrope), "Manrope", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -97,14 +86,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -117,20 +101,20 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  * { @apply border-border outline-ring/50; }
+  html {
+    font-family: var(--font-manrope), "Manrope", sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
-  /* Hide v0 badge globally */
-  #V0-badge {
-    display: none !important;
-  }
+  a { text-underline-offset: 3px; }
+  #V0-badge { display: none !important; }
 }
-
-/* Neutral reference-inspired canvas; avoid pure black. */
-:root { --background: #f6f6f4; --foreground: #292929; --card: #f0f0ee; --card-foreground: #292929; --popover: #fafaf8; --popover-foreground: #292929; --border: #dededb; --input: #dededb; --muted-foreground: #747471; }
-.dark { --background: #191919; --foreground: #e8e8e5; --card: #222222; --card-foreground: #e8e8e5; --popover: #202020; --popover-foreground: #e8e8e5; --border: #363636; --input: #363636; --muted-foreground: #a2a29d; }
-html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-body { font-size: 15px; line-height: 1.6; }
