@@ -31,7 +31,7 @@ export function HomeSelectedWork({ title = "Selected projects" }: { title?: stri
               type="button"
               onClick={() => setSelectedProject(project)}
               aria-label={`View ${project.title} project details`}
-              className="group flex w-full items-baseline justify-between gap-4 py-3 text-left"
+              className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 py-3 text-left sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
             >
               <span className="min-w-0 text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">
                 {project.title}
