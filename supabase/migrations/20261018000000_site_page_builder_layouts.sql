@@ -46,5 +46,9 @@ values
 ('projects', 'Projects', '[
  {"id":"projects-intro","type":"intro","title":"Projects","eyebrow":"Selected work","text":"A collection of things I have helped make, explored, and learned from.","body":"","image":"","visible":true,"layout":"stack"},
  {"id":"projects-list","type":"projects","title":"Projects","eyebrow":"","text":"","body":"","image":"","visible":true,"layout":"stack"}
+]'::jsonb),
+('blog', 'Writing', '[
+ {"id":"blog-intro","type":"intro","title":"Writing","eyebrow":"Notes & ideas","text":"Thoughts on communication, perspective, and the things I notice along the way.","body":"","image":"","visible":true,"layout":"stack"},
+ {"id":"blog-list","type":"writing","title":"All writing","eyebrow":"","text":"","body":"","image":"","visible":true,"layout":"stack"}
 ]'::jsonb)
 on conflict (slug) do nothing;
