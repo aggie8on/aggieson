@@ -9,9 +9,8 @@ import "./globals.css"
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" })
 
 export const metadata: Metadata = {
-  title: "Aggieson — Portfolio & CV",
-  description: "Aggieson — selected work, writing, and creative explorations across people, places, and moments.",
-  generator: "v0.app",
+  title: "Aggieson — Human Designer",
+  description: "The personal site of Aggieson: design work, writing, and notes from everyday life."
   icons: {
     icon: [
       { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
