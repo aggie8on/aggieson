@@ -33,6 +33,14 @@ export const defaultSitePages: Record<string, SitePage> = {
       { id: "projects-list", type: "projects", title: "Projects", eyebrow: "", text: "", body: "", image: "", visible: true, layout: "stack" },
     ],
   },
+  blog: {
+    slug: "blog",
+    title: "Writing",
+    sections: [
+      { id: "blog-intro", type: "intro", title: "Writing", eyebrow: "Notes & ideas", text: "Thoughts on communication, perspective, and the things I notice along the way.", body: "", image: "", visible: true, layout: "stack" },
+      { id: "blog-list", type: "writing", title: "All writing", eyebrow: "", text: "", body: "", image: "", visible: true, layout: "stack" },
+    ],
+  },
   life: {
     slug: "life",
     title: "Life, lately.", 
