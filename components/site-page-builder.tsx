@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ArrowDown, ArrowLeft, ArrowUp, Eye, EyeOff, ImagePlus, LayoutTemplate, Plus, Save, Trash2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { defaultSitePages, normalizeSections, type SitePage, type SiteSection, type SiteSectionType } from "@/lib/site-pages"
+import { InlineRichText } from "@/components/inline-rich-text"
 
 const pageChoices = [
   { slug: "home", label: "Homepage" },
@@ -32,6 +33,8 @@ function makeSection(type: SiteSectionType): SiteSection {
     text: "",
     body: "",
     image: "",
+    inlineIconSvg: "",
+    inlineIconUrl: "",
     visible: true,
     layout: "stack",
   }
@@ -173,8 +176,8 @@ export function SitePageBuilder() {
               {visibleSections.map((section) => <article key={section.id} onClick={() => setSelectedId(section.id)} className={`cursor-pointer rounded-md transition-shadow ${selected?.id === section.id ? "ring-1 ring-foreground/30 ring-offset-4 ring-offset-background" : "hover:ring-1 hover:ring-border hover:ring-offset-4 hover:ring-offset-background"} ${section.layout === "compact" ? "space-y-1" : section.layout === "wide" ? "space-y-5" : "space-y-3"}`}>
                 {section.eyebrow && <p className="text-xs text-muted-foreground">{section.eyebrow}</p>}
                 {section.title && <h3 className={`font-medium tracking-[-0.04em] ${section.type === "intro" ? "text-3xl sm:text-4xl" : "text-sm text-muted-foreground"}`}>{section.title}</h3>}
-                {section.text && <p className="max-w-xl whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{section.text}</p>}
-                {section.body && <p className="max-w-xl whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{section.body}</p>}
+                {section.text && <p className="max-w-xl whitespace-pre-wrap text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText></p>}
+                {section.body && <p className="max-w-xl whitespace-pre-wrap text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.body}</InlineRichText></p>}
                 {section.image && <img src={section.image} alt={section.title || "Section preview"} className={`rounded-lg object-cover ${section.layout === "wide" ? "w-full" : "max-h-64 max-w-full"}`} />}
                 {["projects", "writing", "life"].includes(section.type) && <div className="space-y-2 border-y border-border py-3">{(section.type === "projects" ? ["Project title", "Another project"] : section.type === "writing" ? ["A note on making things", "Things I am learning"] : ["A recipe worth keeping", "A good thing I found"]).map((label) => <div key={label} className="flex items-baseline justify-between gap-3 text-sm"><span>{label}</span><span className="text-xs text-muted-foreground">Preview</span></div>)}</div>}
               </article>)}
@@ -193,6 +196,9 @@ export function SitePageBuilder() {
               <label className="block space-y-1.5 text-sm"><span>Text</span><textarea rows={4} value={selected.text} onChange={(event) => updateSection("text", event.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm leading-6" placeholder="Main copy, description, or intro." /></label>
               <label className="block space-y-1.5 text-sm"><span>Additional text / URL</span><textarea rows={3} value={selected.body} onChange={(event) => updateSection("body", event.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm leading-6" placeholder="Additional copy or a URL for link sections." /></label>
               <label className="block space-y-1.5 text-sm"><span>Image URL</span><input value={selected.image} onChange={(event) => updateSection("image", event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3" placeholder="https://…" /></label>
+              <label className="block space-y-1.5 text-sm"><span>Inline SVG icon</span><textarea rows={5} value={selected.inlineIconSvg ?? ""} onChange={(event) => updateSection("inlineIconSvg", event.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-xs" placeholder="Paste SVG markup here" /></label>
+              <label className="block space-y-1.5 text-sm"><span>Icon link URL (optional)</span><input value={selected.inlineIconUrl ?? ""} onChange={(event) => updateSection("inlineIconUrl", event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3" placeholder="https://example.com" /></label>
+              <p className="text-xs leading-5 text-muted-foreground">Type <code>{"{{icon}}"}</code> in Text or Additional text to place the icon inline. Add links as <code>[link text](https://example.com)</code>.</p>
               <label className="flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-sm hover:bg-accent"><ImagePlus size={15} /><span>Upload image</span><input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={uploadImage} className="sr-only" /></label>
               {selected.image && <img src={selected.image} alt="Selected section preview" className="max-h-36 w-full rounded-md object-cover" />}
               <label className="block space-y-1.5 text-sm"><span>Layout</span><select value={selected.layout} onChange={(event) => updateSection("layout", event.target.value as SiteSection["layout"])} className="h-10 w-full rounded-md border border-input bg-background px-3">{layouts.map((layout) => <option key={layout} value={layout}>{layout[0].toUpperCase() + layout.slice(1)}</option>)}</select></label>

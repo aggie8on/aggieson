@@ -9,8 +9,8 @@ import { itemTypeLabels, slugify, type PortfolioItem } from "@/lib/life-content"
 
 const OWNER_EMAIL = "aggie8on@gmail.com"
 const types = Object.entries(itemTypeLabels)
-type EditorState = { id?: string; title: string; slug: string; item_type: string; category: string; excerpt: string; body: string; cover_image_url: string; external_url: string; published: boolean; featured: boolean; is_owned: boolean; sort_order: number }
-const blankItem: EditorState = { title: "", slug: "", item_type: "note", category: "Notes", excerpt: "", body: "", cover_image_url: "", external_url: "", published: false, featured: false, is_owned: false, sort_order: 0 }
+type EditorState = { id?: string; title: string; slug: string; item_type: string; category: string; excerpt: string; body: string; cover_image_url: string; external_url: string; media_type: "none" | "audio" | "gif" | "video"; media_url: string; published: boolean; featured: boolean; is_owned: boolean; sort_order: number }
+const blankItem: EditorState = { title: "", slug: "", item_type: "note", category: "Notes", excerpt: "", body: "", cover_image_url: "", external_url: "", media_type: "none", media_url: "", published: false, featured: false, is_owned: false, sort_order: 0 }
 
 export function StudioDashboard() {
   const router = useRouter()
@@ -33,7 +33,7 @@ export function StudioDashboard() {
   }, [router])
   useEffect(() => { void loadItems() }, [loadItems])
   function editItem(item: PortfolioItem) {
-    setEditor({ id: item.id, title: item.title, slug: item.slug, item_type: item.item_type, category: item.category, excerpt: item.excerpt ?? "", body: typeof item.content?.body === "string" ? item.content.body : "", cover_image_url: item.cover_image_url ?? "", external_url: item.external_url ?? "", published: item.published, featured: item.featured, is_owned: item.is_owned, sort_order: item.sort_order ?? 0 })
+    setEditor({ id: item.id, title: item.title, slug: item.slug, item_type: item.item_type, category: item.category, excerpt: item.excerpt ?? "", body: typeof item.content?.body === "string" ? item.content.body : "", cover_image_url: item.cover_image_url ?? "", external_url: item.external_url ?? "", media_type: ["audio", "gif", "video"].includes(String(item.content?.media_type)) ? item.content.media_type as "audio" | "gif" | "video" : "none", media_url: typeof item.content?.media_url === "string" ? item.content.media_url : "", published: item.published, featured: item.featured, is_owned: item.is_owned, sort_order: item.sort_order ?? 0 })
     setNotice(""); window.scrollTo({ top: 0, behavior: "smooth" })
   }
   function update<K extends keyof EditorState>(key: K, value: EditorState[K]) { setEditor((current) => ({ ...current, [key]: value })) }
@@ -50,12 +50,30 @@ export function StudioDashboard() {
     const { data } = supabase.storage.from("portfolio-media").getPublicUrl(path)
     update("cover_image_url", data.publicUrl); setNotice("Image uploaded.")
   }
+  async function uploadMedia(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const allowed = file.type.startsWith("audio/") || file.type.startsWith("video/") || file.type === "image/gif"
+    if (!allowed) { setNotice("Choose an audio file, video file, or GIF."); return }
+    if (file.size > 50 * 1024 * 1024) { setNotice("Choose media under 50 MB."); return }
+    setNotice("Uploading media…")
+    const supabase = createClient()
+    const safeName = file.name.toLowerCase().replace(/[^a-z0-9.-]+/g, "-")
+    const path = `writing-media/${Date.now()}-${safeName}`
+    const { error } = await supabase.storage.from("portfolio-media").upload(path, file, { upsert: false })
+    if (error) { setNotice(error.message); return }
+    const { data } = supabase.storage.from("portfolio-media").getPublicUrl(path)
+    const mediaType = file.type.startsWith("audio/") ? "audio" : file.type.startsWith("video/") ? "video" : "gif"
+    update("media_type", mediaType)
+    update("media_url", data.publicUrl)
+    setNotice("Media uploaded.")
+  }
   async function saveItem(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!editor.title.trim()) { setNotice("Add a title first."); return }
     setSaving(true); setNotice("")
     const supabase = createClient()
-    const payload = { title: editor.title.trim(), slug: slugify(editor.slug || editor.title), item_type: editor.item_type, category: editor.category.trim() || itemTypeLabels[editor.item_type] || "Life", excerpt: editor.excerpt.trim(), content: { body: editor.body }, cover_image_url: editor.cover_image_url.trim() || null, external_url: editor.external_url.trim() || null, published: editor.published, featured: editor.featured, is_owned: editor.is_owned, sort_order: Number(editor.sort_order) || 0, published_at: editor.published ? new Date().toISOString() : null }
+    const payload = { title: editor.title.trim(), slug: slugify(editor.slug || editor.title), item_type: editor.item_type, category: editor.category.trim() || itemTypeLabels[editor.item_type] || "Life", excerpt: editor.excerpt.trim(), content: { body: editor.body, ...(editor.media_type !== "none" && editor.media_url.trim() ? { media_type: editor.media_type, media_url: editor.media_url.trim() } : {}) }, cover_image_url: editor.cover_image_url.trim() || null, external_url: editor.external_url.trim() || null, published: editor.published, featured: editor.featured, is_owned: editor.is_owned, sort_order: Number(editor.sort_order) || 0, published_at: editor.published ? new Date().toISOString() : null }
     const query = editor.id ? supabase.from("portfolio_items").update(payload).eq("id", editor.id) : supabase.from("portfolio_items").insert(payload)
     const { error } = await query
     if (error) setNotice(error.message)
@@ -81,6 +99,7 @@ export function StudioDashboard() {
           <label className="block space-y-1.5 text-sm"><span>Short description</span><textarea rows={2} value={editor.excerpt} onChange={(e) => update("excerpt", e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2" placeholder="A sentence to introduce it." /></label>
           <label className="block space-y-1.5 text-sm"><span>Content / notes</span><textarea rows={8} value={editor.body} onChange={(e) => update("body", e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 leading-6" placeholder="Write freely. Line breaks are preserved." /></label>
           <div className="grid gap-4 sm:grid-cols-2"><label className="space-y-1.5 text-sm"><span>Cover image URL</span><input type="url" value={editor.cover_image_url} onChange={(e) => update("cover_image_url", e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3" placeholder="https://…" /></label><label className="space-y-1.5 text-sm"><span>External link</span><input type="url" value={editor.external_url} onChange={(e) => update("external_url", e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3" placeholder="https://…" /></label></div>
+          <fieldset className="space-y-3 rounded-md border border-border p-4"><legend className="px-1 text-sm font-medium">Optional media</legend><p className="text-xs leading-5 text-muted-foreground">Add audio for a listenable writing, a GIF, or a video. Leave as “No media” when the entry has none.</p><div className="grid gap-3 sm:grid-cols-2"><label className="space-y-1.5 text-sm"><span>Media type</span><select value={editor.media_type} onChange={(e) => update("media_type", e.target.value as EditorState["media_type"])} className="h-10 w-full rounded-md border border-input bg-background px-3"><option value="none">No media</option><option value="audio">Audio player</option><option value="gif">GIF</option><option value="video">Video</option></select></label><label className="space-y-1.5 text-sm"><span>Media URL (optional)</span><input type="url" value={editor.media_url} onChange={(e) => update("media_url", e.target.value)} disabled={editor.media_type === "none"} className="h-10 w-full rounded-md border border-input bg-background px-3 disabled:opacity-50" placeholder="https://… or uploaded file" /></label></div><label className="flex cursor-pointer items-center gap-2 text-sm"><Upload size={14} /><span>Upload audio, GIF, or video (max 50 MB)</span><input type="file" accept="audio/*,video/*,image/gif" onChange={uploadMedia} className="sr-only" /></label>{editor.media_type !== "none" && editor.media_url && <p className="break-all text-xs text-muted-foreground">Attached {editor.media_type}: {editor.media_url}</p>}</fieldset>
           <label className="flex cursor-pointer items-center gap-2 text-sm"><Upload size={14} /><span>Upload cover image (max 10 MB)</span><input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={uploadImage} className="sr-only" /></label>{editor.cover_image_url && <img src={editor.cover_image_url} alt="Cover preview" className="max-h-40 rounded-md object-cover" />}
           <div className="grid gap-3 sm:grid-cols-2"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editor.published} onChange={(e) => update("published", e.target.checked)} /> Published</label><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editor.featured} onChange={(e) => update("featured", e.target.checked)} /> Featured</label>{editor.item_type === "wishlist" && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editor.is_owned} onChange={(e) => update("is_owned", e.target.checked)} /> I own this now (move to setup)</label>}<label className="flex items-center gap-2 text-sm"><span className="shrink-0">Sort order</span><input type="number" value={editor.sort_order} onChange={(e) => update("sort_order", Number(e.target.value))} className="h-9 w-24 rounded-md border border-input bg-background px-2" /></label></div>
           {notice && <p role="status" className="rounded-md border border-border px-3 py-3 text-sm leading-6 text-muted-foreground">{notice}</p>}
