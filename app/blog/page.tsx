@@ -32,7 +32,7 @@ export default async function BlogPage() {
     const cmsPosts: ArchivePost[] = (writingData ?? []).map((post) => {
       const timestamp = new Date(post.published_at ?? post.created_at).getTime()
       const body = typeof post.content?.body === "string" ? post.content.body : ""
-      const wordCount = body.trim() ? body.trim().split(/\\s+/).length : 0
+      const wordCount = body.trim() ? body.trim().split(/\s+/).length : 0
       return {
         slug: post.slug,
         title: post.title,
