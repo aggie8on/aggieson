@@ -18,6 +18,7 @@ export type PortfolioItem = {
 
 export const itemTypeLabels: Record<string, string> = {
   writing: "Writing",
+  project: "Projects",
   recipe: "Recipes",
   music: "Music",
   desk: "Desk setup",
