@@ -29,6 +29,6 @@ The Supabase client uses the public project URL and publishable key. To override
 - `/blog` — writing archive and individual articles
 - `/life` — public life notebook
 - `/studio/login` — private content editor sign-in
-- `/studio/pages` — private page layout editor
+- `/studio` — private Studio with separate Writing, Projects, Life log and Site text editors
 
 The public site reads published content from Supabase. Studio writes are protected by Supabase Row Level Security policies. See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for the content model and storage configuration.
