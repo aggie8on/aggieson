@@ -55,13 +55,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  let post: BlogPostData | undefined = blogPosts[slug]
+  let post: BlogPostData | undefined
   let mediaType: string | undefined
   let mediaUrl: string | undefined
 
-  if (!post) {
+  {
     const cmsPost = await getCmsWriting(slug)
-    if (!cmsPost) notFound()
+    if (!cmsPost) post = blogPosts[slug]
+    if (cmsPost) {
 
     const body = typeof cmsPost.content?.body === "string" ? cmsPost.content.body : ""
     const paragraphs = body.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
@@ -78,6 +79,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     }
     mediaType = typeof cmsPost.content?.media_type === "string" ? cmsPost.content.media_type : undefined
     mediaUrl = typeof cmsPost.content?.media_url === "string" ? cmsPost.content.media_url : undefined
+    }
   }
 
   if (!post) notFound()
