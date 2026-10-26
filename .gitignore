@@ -70,3 +70,8 @@ target/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
+
+# Next.js build output
+.next/
+out/
+*.tsbuildinfo
