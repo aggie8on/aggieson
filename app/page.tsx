@@ -36,12 +36,12 @@ export default async function HomePage() {
         .order("published_at", { ascending: false })
         .order("created_at", { ascending: false }),
       supabase.from("portfolio_items")
-        .select("slug,title,excerpt,category,cover_image_url,content,sort_order")
+        .select("slug,title,excerpt,category,cover_image_url,content,sort_order,featured")
         .eq("published", true).eq("item_type", "project").order("sort_order", { ascending: true }),
     ])
     if (pageData?.sections) sections = normalizeSections(pageData.sections, sections)
     lifeItems = (itemData ?? []) as PortfolioItem[]
-    if (projectData?.length) projectItems = projectData.map((item) => ({
+    if (projectData?.length) projectItems = projectData.filter((item) => item.featured).map((item) => ({
       id: item.slug, title: item.title, description: item.excerpt ?? "",
       year: typeof item.content?.year === "string" ? item.content.year : "",
       category: item.category ?? "Project", image: item.cover_image_url ?? "",
@@ -57,8 +57,8 @@ export default async function HomePage() {
       }
     })
     latestPosts = [
-      ...Object.values(blogPosts).map((post) => ({ slug: post.slug, title: post.title, date: post.date, timestamp: new Date(post.date).getTime() })),
       ...cmsPosts,
+      ...Object.values(blogPosts).map((post) => ({ slug: post.slug, title: post.title, date: post.date, timestamp: new Date(post.date).getTime() })),
     ]
       .filter((post, index, all) => all.findIndex((candidate) => candidate.slug === post.slug) === index)
       .sort((a, b) => b.timestamp - a.timestamp)
