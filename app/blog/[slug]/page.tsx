@@ -64,8 +64,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     if (!cmsPost) post = blogPosts[slug]
     if (cmsPost) {
 
-    const body = typeof cmsPost.content?.body === "string" ? cmsPost.content.body : ""
-    const paragraphs = body.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
+    const body: string = typeof cmsPost.content?.body === "string" ? cmsPost.content.body : ""
+    const paragraphs: string[] = body.split(/\n\s*\n/).map((paragraph: string) => paragraph.trim()).filter(Boolean)
     if (paragraphs.length === 0 && cmsPost.excerpt) paragraphs.push(cmsPost.excerpt)
     const wordCount = body.trim() ? body.trim().split(/\s+/).length : 0
     const dateValue = cmsPost.published_at ?? cmsPost.created_at
