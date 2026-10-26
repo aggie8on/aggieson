@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation"
 import { ArrowUpRight, LogOut, Plus, Save, Trash2, Upload } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { itemTypeLabels, slugify, type PortfolioItem } from "@/lib/life-content"
+import { projects } from "@/lib/projects"
+import { blogPosts } from "@/lib/blog-data"
 
 const OWNER_EMAIL = "aggie8on@gmail.com"
 const types = Object.entries(itemTypeLabels)
@@ -27,9 +29,27 @@ export function StudioDashboard() {
     if (userError || !user) { router.replace("/studio/login"); return }
     if (user.email?.toLowerCase() !== OWNER_EMAIL) { await supabase.auth.signOut(); router.replace("/studio/login"); return }
     setUserEmail(user.email)
-    const { data, error } = await supabase.from("portfolio_items").select("id,title,slug,item_type,category,excerpt,content,cover_image_url,external_url,published,featured,is_owned,sort_order,published_at,created_at").order("updated_at", { ascending: false })
-    if (error) setNotice(error.message); else setItems((data ?? []) as PortfolioItem[])
-    setLoading(false)
+    const { data: existing } = await supabase.from("portfolio_items").select("slug,item_type")
+    if (existing) {
+      const keys = new Set(existing.map((item) => item.item_type + ":" + item.slug))
+      const projectSeeds = projects.filter((project) => !keys.has("project:" + project.id)).map((project, index) => ({
+        title: project.title, slug: project.id, item_type: "project", category: project.category,
+        excerpt: project.description, content: { body: project.description, year: project.year, images: project.images },
+        cover_image_url: project.image, external_url: null, published: true, featured: index < 4,
+        is_owned: true, sort_order: index, published_at: new Date(project.year + "-01-01T12:00:00Z").toISOString(),
+      }))
+      const writingSeeds = Object.values(blogPosts).filter((post) => !keys.has("writing:" + post.slug)).map((post, index) => ({
+        title: post.title, slug: post.slug, item_type: "writing", category: "Writing",
+        excerpt: post.content[0] ?? "", content: { body: post.content.join("\n\n"), legacy_date: post.date, legacy_read_time: post.readTime, audio_url: post.audioUrl ?? "" },
+        cover_image_url: null, external_url: null, published: true, featured: false, is_owned: true, sort_order: index,
+        published_at: Number.isNaN(new Date(post.date).getTime()) ? new Date().toISOString() : new Date(post.date).toISOString(),
+      }))
+      const seeds = [...projectSeeds, ...writingSeeds]
+      if (seeds.length) {
+        const { error: seedError } = await supabase.from("portfolio_items").insert(seeds)
+        if (seedError) setNotice("Import existing content: " + seedError.message)
+      }
+    }
   }, [router])
   useEffect(() => { void loadItems() }, [loadItems])
   function editItem(item: PortfolioItem) {
