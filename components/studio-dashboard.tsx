@@ -50,6 +50,9 @@ export function StudioDashboard() {
         if (seedError) setNotice("Import existing content: " + seedError.message)
       }
     }
+    const { data, error } = await supabase.from("portfolio_items").select("id,title,slug,item_type,category,excerpt,content,cover_image_url,external_url,published,featured,is_owned,sort_order,published_at,created_at").order("updated_at", { ascending: false })
+    if (error) setNotice(error.message); else setItems((data ?? []) as PortfolioItem[])
+    setLoading(false)
   }, [router])
   useEffect(() => { void loadItems() }, [loadItems])
   function editItem(item: PortfolioItem) {
