@@ -18,11 +18,11 @@ function CategoryIcon({ category }: { category: string }) {
   return <Sparkles {...props} />
 }
 
-export function HomeSelectedWork() {
+export function HomeSelectedWork({ projectItems = projects }: { projectItems?: Project[] }) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const closeProject = useCallback(() => setSelectedProject(null), [])
-  const selectedProjects = selectedProjectIds
-    .map((id) => projects.find((project) => project.id === id))
+  const selectedProjects = (projectItems === projects ? selectedProjectIds.map((id) => projectItems.find((project) => project.id === id)) : projectItems
+    )
     .filter((project): project is Project => Boolean(project))
 
   return (

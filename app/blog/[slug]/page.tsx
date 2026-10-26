@@ -55,13 +55,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  let post: BlogPostData | undefined = blogPosts[slug]
+  let post: BlogPostData | undefined
   let mediaType: string | undefined
   let mediaUrl: string | undefined
 
-  if (!post) {
+  {
     const cmsPost = await getCmsWriting(slug)
-    if (!cmsPost) notFound()
+    if (!cmsPost) post = blogPosts[slug]
+    if (cmsPost) {
 
     const body = typeof cmsPost.content?.body === "string" ? cmsPost.content.body : ""
     const paragraphs = body.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean)
@@ -78,6 +79,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     }
     mediaType = typeof cmsPost.content?.media_type === "string" ? cmsPost.content.media_type : undefined
     mediaUrl = typeof cmsPost.content?.media_url === "string" ? cmsPost.content.media_url : undefined
+    }
   }
 
   if (!post) notFound()
@@ -85,10 +87,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <main className="mx-auto max-w-2xl px-5 py-10 sm:px-6 md:py-16">
       <article className="space-y-6">
-        <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" />
-          Back to writing
-        </Link>
+        <nav aria-label="Page navigation" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+            <ArrowLeft className="h-4 w-4" />
+            Home
+          </Link>
+          <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+            Back to writing
+          </Link>
+        </nav>
 
         <header className="space-y-3">
           <h1 className="text-3xl font-medium tracking-[-0.04em] text-balance md:text-4xl">{post.title}</h1>

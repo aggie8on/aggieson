@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react"
-import { X } from "lucide-react"
+import { ArrowLeft, X } from "lucide-react"
+import Link from "next/link"
 import Image from "next/image"
 import type { Project } from "@/lib/projects"
 import { Button } from "@/components/ui/button"
@@ -80,7 +81,8 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         onKeyDown={trapFocus}
       >
         <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-5 py-2.5 flex items-center justify-between z-10">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <Link href="/" className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"><ArrowLeft className="h-3.5 w-3.5" /> Home</Link>
             <h2 id="project-modal-title" className="text-base md:text-lg font-medium tracking-[-0.02em]">{project.title}</h2>
             <span className="text-sm text-muted-foreground">• {project.year}</span>
           </div>

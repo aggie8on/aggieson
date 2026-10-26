@@ -42,7 +42,7 @@ export default async function BlogPage() {
         timestamp,
       }
     })
-    postsArray = [...postsArray, ...cmsPosts]
+    postsArray = [...cmsPosts, ...postsArray]
       .filter((post, index, all) => all.findIndex((candidate) => candidate.slug === post.slug) === index)
       .sort((a, b) => b.timestamp - a.timestamp)
   } catch {
