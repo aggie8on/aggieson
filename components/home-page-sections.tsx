@@ -5,6 +5,7 @@ import { InlineRichText } from "@/components/inline-rich-text"
 import { SocialGlassLinks } from "@/components/social-glass-links"
 import { itemTypeLabels, type PortfolioItem } from "@/lib/life-content"
 import type { SiteSection } from "@/lib/site-pages"
+import type { Project } from "@/lib/projects"
 
 type Post = { slug: string; title: string; date: string }
 
@@ -14,7 +15,7 @@ function sectionSpacing(layout: SiteSection["layout"]) {
   return "space-y-3"
 }
 
-export function HomePageSections({ sections, posts, lifeItems }: { sections: SiteSection[]; posts: Post[]; lifeItems: PortfolioItem[] }) {
+export function HomePageSections({ sections, posts, lifeItems, projectItems }: { sections: SiteSection[]; posts: Post[]; lifeItems: PortfolioItem[]; projectItems?: Project[] }) {
   return (
     <div className="space-y-12 md:space-y-14">
       {sections.filter((section) => section.visible).map((section) => {
@@ -38,7 +39,7 @@ export function HomePageSections({ sections, posts, lifeItems }: { sections: Sit
             </section>
           )
         }
-        if (section.type === "projects") return <div key={section.id}><HomeSelectedWork /></div>
+        if (section.type === "projects") return <div key={section.id}><HomeSelectedWork projectItems={projectItems} /></div>
         if (section.type === "writing") {
           return (
             <section key={section.id} className={sectionSpacing(section.layout)}>
