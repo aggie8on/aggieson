@@ -4,7 +4,7 @@ export type SiteSection = {
   id: string
   type: SiteSectionType
   title: string
-  role: string
+  role?: string
   eyebrow: string
   text: string
   body: string
