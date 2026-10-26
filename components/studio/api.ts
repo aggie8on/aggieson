@@ -82,3 +82,14 @@ export type PanelProps = {
   /** Reloads items from the database after any change. */
   onChanged: () => Promise<void>
 }
+
+export async function fetchLinkPreview(url: string): Promise<Outcome<import("@/app/api/link-preview/route").LinkPreview>> {
+  try {
+    const response = await fetch(`/api/link-preview?url=${encodeURIComponent(url)}`, { cache: "no-store" })
+    const json = await response.json().catch(() => null)
+    if (!response.ok) return { ok: false, error: (json && typeof json.error === "string" ? json.error : "Couldn't load that link.") }
+    return { ok: true, data: json }
+  } catch {
+    return { ok: false, error: "Couldn't reach the preview service. Check your connection and try again." }
+  }
+}

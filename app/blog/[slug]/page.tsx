@@ -34,7 +34,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <main className="mx-auto max-w-2xl px-5 pb-16 pt-12 sm:px-6 md:pt-16">
-      <PageNav trail={[{ label: "Writing", href: "/blog" }]} />
+      <PageNav showHome={false} trail={[{ label: "Writing", href: "/blog" }]} />
       <article className="space-y-6">
         <header className="space-y-3">
           <h1 className="text-3xl font-medium tracking-[-0.04em] text-balance md:text-4xl">{post.title}</h1>
