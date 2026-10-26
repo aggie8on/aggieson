@@ -29,6 +29,7 @@ function makeSection(type: SiteSectionType): SiteSection {
     id: `${type}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
     type,
     title: sectionChoices.find((entry) => entry.type === type)?.label ?? "New section",
+    role: "",
     eyebrow: "",
     text: "",
     body: "",
@@ -176,6 +177,7 @@ export function SitePageBuilder() {
               {visibleSections.map((section) => <article key={section.id} onClick={() => setSelectedId(section.id)} className={`cursor-pointer rounded-md transition-shadow ${selected?.id === section.id ? "ring-1 ring-foreground/30 ring-offset-4 ring-offset-background" : "hover:ring-1 hover:ring-border hover:ring-offset-4 hover:ring-offset-background"} ${section.layout === "compact" ? "space-y-1" : section.layout === "wide" ? "space-y-5" : "space-y-3"}`}>
                 {section.eyebrow && <p className="text-xs text-muted-foreground">{section.eyebrow}</p>}
                 {section.title && <h3 className={`font-medium tracking-[-0.04em] ${section.type === "intro" ? "text-3xl sm:text-4xl" : "text-sm text-muted-foreground"}`}>{section.title}</h3>}
+                {section.type === "intro" && <p className="text-sm leading-5 text-muted-foreground">{section.role || "Human designer"}</p>}
                 {section.text && <p className="max-w-xl whitespace-pre-wrap text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText></p>}
                 {section.body && <p className="max-w-xl whitespace-pre-wrap text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.body}</InlineRichText></p>}
                 {section.image && <img src={section.image} alt={section.title || "Section preview"} className={`rounded-lg object-cover ${section.layout === "wide" ? "w-full" : "max-h-64 max-w-full"}`} />}
@@ -192,6 +194,7 @@ export function SitePageBuilder() {
             <div className="mt-4 space-y-4">
               <label className="block space-y-1.5 text-sm"><span>Section type</span><select value={selected.type} onChange={(event) => updateSection("type", event.target.value as SiteSectionType)} className="h-10 w-full rounded-md border border-input bg-background px-3">{sectionChoices.map((choice) => <option key={choice.type} value={choice.type}>{choice.label}</option>)}</select></label>
               <label className="block space-y-1.5 text-sm"><span>Heading</span><input value={selected.title} onChange={(event) => updateSection("title", event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3" placeholder="Section heading" /></label>
+              <label className="block space-y-1.5 text-sm"><span>Role / title under your name</span><input value={selected.role || (selected.type === "intro" ? "Human designer" : "")} onChange={(event) => updateSection("role", event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3" placeholder="e.g. Design Engineer" /></label>
               <label className="block space-y-1.5 text-sm"><span>Eyebrow / small label</span><input value={selected.eyebrow} onChange={(event) => updateSection("eyebrow", event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3" placeholder="Optional label" /></label>
               <label className="block space-y-1.5 text-sm"><span>Text</span><textarea rows={4} value={selected.text} onChange={(event) => updateSection("text", event.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm leading-6" placeholder="Main copy, description, or intro." /></label>
               <label className="block space-y-1.5 text-sm"><span>Additional text / URL</span><textarea rows={3} value={selected.body} onChange={(event) => updateSection("body", event.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm leading-6" placeholder="Additional copy or a URL for link sections." /></label>
