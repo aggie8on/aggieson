@@ -31,18 +31,23 @@ Public self-registration is intentionally disabled. Do not re-enable it for the 
 
 ## Content model
 
-The Studio (`/studio`) has four tabs, each with its own form:
+The Studio (`/studio`) has five tabs, each with its own form:
 
 - **Writing** (`item_type = writing`): title, date, summary, post body, optional audio, video or GIF. Shown on `/blog` and the homepage's recent writing.
 - **Projects** (`project`): name, year, category, description, cover image, ordered gallery, and a "show on the homepage" switch. Shown on `/projects`, and on the homepage when featured.
-- **Life log** (`recipe`, `music`, `desk`, `wishlist`, `bookmark`, `gem`, `life-log`, `note`): each kind has its own fields, stored under `content.meta`. Shown on `/life` and `/life/<slug>`.
+- **Bookmarks** (`bookmark`, `recipe`, `gem`, `desk`): shown on `/life` as round linked tiles, with the name revealed on hover. Links use the site's icon unless you upload a tile image. A link to an X post is saved as a preview card instead of a tile. Gadgets (`desk`) can be marked as owned.
+- **Life log** (`music`, `photo`, `note`): shown on `/life` below the bookmarks. Music takes a Spotify link and shows Spotify's player. Photos show as a grid with the caption on hover. Notes show a pin icon, and pinned notes sit first.
 - **Site text**: the heading, role and intro text for the homepage, Writing, Projects and Life pages, stored in `public.site_pages`.
+
+Older `wishlist`, `life-log` and `custom` entries still display, as Gadgets and Notes.
+
+X posts and Spotify titles are looked up when you paste the link in Studio, through the owner-only route `/api/link-preview`, and the details are stored with the entry. The public site never calls X, so a deleted post keeps its saved card.
 
 Rules:
 
 - The database is the source of truth. The built-in content in `lib/blog-data.ts` and `lib/projects.ts` is only a fallback if Supabase cannot be reached, so deleting something in Studio removes it from the site.
 - Draft entries remain private to the configured owner.
-- Writing never appears on `/life`, and projects never appear on `/life`.
+- Writing and projects never appear on `/life`.
 - Existing content was imported into the database once. Studio does not re-import on load.
 
 ## Remaining security setting

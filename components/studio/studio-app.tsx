@@ -5,20 +5,21 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowUpRight, LogOut } from "lucide-react"
 import { loadAllItems } from "@/components/studio/api"
-import { LifePanel } from "@/components/studio/life-panel"
+import { CollectionPanel } from "@/components/studio/collection-panel"
 import { ProjectPanel } from "@/components/studio/project-panel"
 import { SiteTextPanel } from "@/components/studio/site-text-panel"
 import { WritingPanel } from "@/components/studio/writing-panel"
 import { Notice, secondaryButton } from "@/components/studio/ui"
-import { PUBLIC_LIFE_TYPES, type PortfolioItem } from "@/lib/life-content"
+import { PUBLIC_LIFE_TYPES, groupOf, type PortfolioItem } from "@/lib/life-content"
 import { createClient } from "@/lib/supabase/client"
 
 const OWNER_EMAIL = "aggie8on@gmail.com"
-type TabKey = "writing" | "projects" | "life" | "site"
+type TabKey = "writing" | "projects" | "bookmarks" | "lifelog" | "site"
 const TABS: { key: TabKey; label: string }[] = [
   { key: "writing", label: "Writing" },
   { key: "projects", label: "Projects" },
-  { key: "life", label: "Life log" },
+  { key: "bookmarks", label: "Bookmarks" },
+  { key: "lifelog", label: "Life log" },
   { key: "site", label: "Site text" },
 ]
 
@@ -68,7 +69,8 @@ export function StudioApp() {
   const counts: Record<TabKey, number | undefined> = {
     writing: items.filter((item) => item.item_type === "writing").length,
     projects: items.filter((item) => item.item_type === "project").length,
-    life: items.filter((item) => PUBLIC_LIFE_TYPES.includes(item.item_type)).length,
+    bookmarks: items.filter((item) => PUBLIC_LIFE_TYPES.includes(item.item_type) && groupOf(item) === "bookmarks").length,
+    lifelog: items.filter((item) => PUBLIC_LIFE_TYPES.includes(item.item_type) && groupOf(item) === "lifelog").length,
     site: undefined,
   }
 
@@ -98,7 +100,8 @@ export function StudioApp() {
         {error && <div className="mb-6"><Notice message={{ tone: "error", text: error }} /></div>}
         {tab === "writing" && <WritingPanel items={items} onChanged={reload} />}
         {tab === "projects" && <ProjectPanel items={items} onChanged={reload} />}
-        {tab === "life" && <LifePanel items={items} onChanged={reload} />}
+        {tab === "bookmarks" && <CollectionPanel group="bookmarks" items={items} onChanged={reload} />}
+        {tab === "lifelog" && <CollectionPanel group="lifelog" items={items} onChanged={reload} />}
         {tab === "site" && <SiteTextPanel />}
       </div>
     </main>
