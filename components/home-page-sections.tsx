@@ -28,7 +28,7 @@ export function HomePageSections({ sections, posts, lifeItems }: { sections: Sit
                 </div>
                 <div className="min-w-0">
                   <h1 id={section.id + "-heading"} className="hero-name text-2xl font-medium leading-[1.2] tracking-[-0.045em] sm:text-[1.65rem]">{section.title || "Aggieson"}</h1>
-                  <p className="hero-role mt-1 text-sm leading-5 text-muted-foreground">Human designer</p>
+                  <p className="hero-role mt-1 text-sm leading-5 text-muted-foreground">{section.role || "Human designer"}</p>
                 </div>
               </div>
               <div className={(section.layout === "split" ? "grid gap-4 sm:grid-cols-[1fr_0.8fr]" : "max-w-xl space-y-3") + " !mt-[60px]"}>
