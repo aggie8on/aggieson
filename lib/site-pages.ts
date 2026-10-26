@@ -4,6 +4,7 @@ export type SiteSection = {
   id: string
   type: SiteSectionType
   title: string
+  role: string
   eyebrow: string
   text: string
   body: string
@@ -21,7 +22,7 @@ export const defaultSitePages: Record<string, SitePage> = {
     slug: "home",
     title: "Homepage",
     sections: [
-      { id: "intro", type: "intro", title: "Aggieson", eyebrow: "", text: "Human designer. Currently at Toothless working on identities and systems — crafting interfaces and building design tooling.", body: "I enjoy making useful things and care a lot about making them feel simple and considered.", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
+      { id: "intro", type: "intro", title: "Aggieson", role: "Human designer", eyebrow: "", text: "Human designer. Currently at Toothless working on identities and systems — crafting interfaces and building design tooling.", body: "I enjoy making useful things and care a lot about making them feel simple and considered.", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
       { id: "projects", type: "projects", title: "Selected projects", eyebrow: "", text: "", body: "", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
       { id: "writing", type: "writing", title: "Recent writing", eyebrow: "", text: "", body: "", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
       { id: "life", type: "life", title: "Life, lately", eyebrow: "", text: "", body: "", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
@@ -60,6 +61,7 @@ export function normalizeSections(value: unknown, fallback: SiteSection[]): Site
       id: item.id,
       type: (["intro", "projects", "writing", "life", "text", "image", "links"].includes(item.type) ? item.type : "text") as SiteSectionType,
       title: typeof item.title === "string" ? item.title : "",
+      role: typeof item.role === "string" ? item.role : "",
       eyebrow: typeof item.eyebrow === "string" ? item.eyebrow : "",
       text: typeof item.text === "string" ? item.text : "",
       body: typeof item.body === "string" ? item.body : "",
