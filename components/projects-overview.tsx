@@ -1,14 +1,14 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { ProjectModal } from "@/components/project-modal"
-import { projects, type Project } from "@/lib/projects"
+import type { Project } from "@/lib/projects"
 import type { SiteSection } from "@/lib/site-pages"
+import { PageNav } from "@/components/page-nav"
 import { InlineRichText } from "@/components/inline-rich-text"
 
-export function ProjectsOverview({ sections, projectItems = projects }: { sections: SiteSection[]; projectItems?: Project[] }) {
+export function ProjectsOverview({ sections, projectItems = [] }: { sections: SiteSection[]; projectItems?: Project[] }) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   useEffect(() => {
     const syncProjectFromUrl = () => {
@@ -41,7 +41,7 @@ export function ProjectsOverview({ sections, projectItems = projects }: { sectio
   return (
     <>
       <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-10 sm:px-6 md:pt-14">
-        <div className="mb-5"><Link href="/" className="text-sm text-muted-foreground transition-colors hover:text-foreground">← Aggieson</Link></div>
+        <PageNav />
         <div className="space-y-12">
           {sections.filter((section) => section.visible).map((section) => {
             if (section.type === "intro") return <header key={section.id} className="max-w-2xl space-y-5"><p className="text-sm text-muted-foreground">{section.eyebrow || "Selected projects"}</p><h1 className="text-2xl font-medium leading-[1.2] tracking-[-0.045em] sm:text-[1.65rem]">{section.title || "Projects"}</h1>{section.text && <p className="text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText></p>}{section.body && <p className="whitespace-pre-wrap text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.body}</InlineRichText></p>}{section.image && <img src={section.image} alt={section.title || "Projects"} className="mt-4 max-h-80 w-full rounded-lg object-cover" />}</header>

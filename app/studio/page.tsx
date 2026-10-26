@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { StudioDashboard } from "@/components/studio-dashboard"
+import { StudioApp } from "@/components/studio/studio-app"
 
 export default async function StudioPage() {
   const supabase = await createClient()
@@ -8,5 +8,5 @@ export default async function StudioPage() {
   if (!user || user.email?.toLowerCase() !== "aggie8on@gmail.com") {
     redirect("/studio/login")
   }
-  return <StudioDashboard />
+  return <StudioApp />
 }

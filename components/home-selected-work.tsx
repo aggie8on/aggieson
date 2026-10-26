@@ -4,9 +4,8 @@ import { useCallback, useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight, AudioLines, Bike, Heart, Lightbulb, Smartphone, Sparkles } from "lucide-react"
 import { ProjectModal } from "@/components/project-modal"
-import { projects, type Project } from "@/lib/projects"
+import type { Project } from "@/lib/projects"
 
-const selectedProjectIds = ["1", "2", "4", "5"]
 
 function CategoryIcon({ category }: { category: string }) {
   const props = { size: 15, strokeWidth: 1.5, "aria-hidden": true as const }
@@ -18,12 +17,10 @@ function CategoryIcon({ category }: { category: string }) {
   return <Sparkles {...props} />
 }
 
-export function HomeSelectedWork({ projectItems = projects }: { projectItems?: Project[] }) {
+export function HomeSelectedWork({ projectItems = [] }: { projectItems?: Project[] }) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const closeProject = useCallback(() => setSelectedProject(null), [])
-  const selectedProjects = (projectItems === projects ? selectedProjectIds.map((id) => projectItems.find((project) => project.id === id)) : projectItems
-    )
-    .filter((project): project is Project => Boolean(project))
+  const selectedProjects = projectItems
 
   return (
     <>
