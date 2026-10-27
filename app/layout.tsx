@@ -9,12 +9,14 @@ import "./globals.css"
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" })
 
 export const metadata: Metadata = {
-  title: "Aggieson — Human Designer",
+  title: "Aggieson - IndieDesigner",
   description: "The personal site of Aggieson: design work, writing, and notes from everyday life.",
   icons: {
     icon: [
-      { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
-      { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
     apple: "/apple-icon.png",
   },
