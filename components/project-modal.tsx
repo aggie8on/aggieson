@@ -66,7 +66,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-3 md:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/15 px-5 py-6 backdrop-blur-md motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200 sm:px-6 dark:bg-black/45"
       onClick={onClose}
     >
       <div
@@ -75,11 +75,11 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         aria-modal="true"
         aria-labelledby="project-modal-title"
         tabIndex={-1}
-        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background focus:outline-none"
+        className="glass glass-lg relative max-h-[88vh] w-full max-w-[calc(42rem-3rem)] overflow-y-auto overscroll-contain rounded-2xl focus:outline-none motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-200"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={trapFocus}
       >
-        <div className="sticky top-0 bg-background/95 backdrop-blur border-b border-border px-4 md:px-5 py-2.5 flex items-center justify-between z-10">
+        <div className="glass-bar sticky top-0 z-10 flex items-center justify-between rounded-t-2xl px-4 py-2.5 md:px-5">
           <div className="flex min-w-0 items-center gap-3">
             <h2 id="project-modal-title" className="text-base md:text-lg font-medium tracking-[-0.02em]">{project.title}</h2>
             <span className="text-sm text-muted-foreground">• {project.year}</span>
@@ -91,19 +91,19 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         </div>
 
         <div className="p-4 md:p-6 space-y-5">
-          <p className="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto text-sm">
+          <p className="mx-auto max-w-xl text-center text-sm leading-relaxed text-foreground/75">
             {project.description}
           </p>
 
           <div className="space-y-4">
             {project.images.map((image, index) => (
-              <div key={index} className="relative w-full aspect-video overflow-hidden bg-muted">
+              <div key={index} className="relative aspect-video w-full overflow-hidden rounded-lg border border-border/60 bg-foreground/5">
                 <Image
                   src={image || "/placeholder.svg"}
                   alt={`${project.title} - Image ${index + 1}`}
                   fill
                   className="object-contain"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                  sizes="(max-width: 672px) 100vw, 624px"
                 />
               </div>
             ))}
