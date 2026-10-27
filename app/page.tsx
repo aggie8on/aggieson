@@ -8,7 +8,7 @@ export default async function HomePage() {
     getSiteSections("home"),
     getWriting(),
     getProjects(),
-    getLifeItems({ limit: 3, featuredFirst: true }),
+    getLifeItems({ limit: 8, featuredFirst: true }),
   ])
 
   const posts = writing.data.slice(0, 3).map((post) => ({ slug: post.slug, title: post.title, date: post.dateShort }))

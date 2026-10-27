@@ -2,8 +2,9 @@ import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { HomeSelectedWork } from "@/components/home-selected-work"
 import { InlineRichText } from "@/components/inline-rich-text"
+import { LifeEntries } from "@/components/life-entries"
 import { SocialGlassLinks } from "@/components/social-glass-links"
-import { effectiveKind, type PortfolioItem } from "@/lib/life-content"
+import type { PortfolioItem } from "@/lib/life-content"
 import type { SiteSection } from "@/lib/site-pages"
 import type { Project } from "@/lib/projects"
 
@@ -55,7 +56,7 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems }: {
           return (
             <section key={section.id} className={sectionSpacing(section.layout)}>
               <div className="flex justify-start"><Link href="/life" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">All life <ArrowUpRight size={13} strokeWidth={1.7} /></Link></div>
-              {lifeItems.length ? <div className="space-y-4">{lifeItems.map((item) => <article key={item.id}><div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-5"><Link href={`/life/${item.slug}`} className="text-sm font-medium tracking-[-0.02em] hover:text-muted-foreground">{item.title}</Link><span className="shrink-0 text-xs text-muted-foreground">{effectiveKind(item).label}</span></div>{item.excerpt && <p className="mt-1 max-w-2xl text-sm leading-5 text-muted-foreground">{item.excerpt}</p>}</article>)}</div> : <p className="text-sm leading-6 text-muted-foreground">{section.text || "Recipes, playlists, useful finds, desk notes, and little things from everyday life will live here."}</p>}
+              {lifeItems.length ? <LifeEntries items={lifeItems} compact /> : <p className="text-sm leading-6 text-muted-foreground">{section.text || "Recipes, playlists, useful finds, desk notes, and little things from everyday life will live here."}</p>}
             </section>
           )
         }

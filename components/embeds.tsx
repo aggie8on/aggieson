@@ -47,14 +47,16 @@ export function SpotifyEmbed({ url, title, height = 152 }: { url: string; title?
   const ref = parseSpotifyUrl(url)
   if (!ref) return null
   return (
-    <iframe
-      title={title ? `${title} on Spotify` : "Spotify player"}
-      src={ref.embedUrl}
-      width="100%"
-      height={height}
-      loading="lazy"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      className="rounded-xl border-0 bg-transparent"
-    />
+    <div className="overflow-hidden rounded-xl bg-muted/50">
+      <iframe
+        title={title ? `${title} on Spotify` : "Spotify player"}
+        src={ref.embedUrl}
+        width="100%"
+        height={height}
+        loading="lazy"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        className="block border-0"
+      />
+    </div>
   )
 }
