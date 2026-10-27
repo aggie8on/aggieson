@@ -26,7 +26,7 @@ function Tile({ tile }: { tile: BookmarkTile }) {
           : <KindIcon kind={tile.kind} size={22} />}
       </span>
       {/* Name on hover or keyboard focus. Touch screens have no hover, so they get a short caption instead. */}
-      <span role="tooltip" className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max max-w-[12rem] -translate-x-1/2 rounded-md bg-foreground px-2 py-1 text-center text-xs leading-4 text-background opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">{tile.title}</span>
+      <span role="tooltip" className="glass glass-sm pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max max-w-[12rem] -translate-x-1/2 rounded-lg px-2.5 py-1 text-center text-xs leading-4 text-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">{tile.title}</span>
       <span className="mt-1.5 block w-16 truncate text-center text-[10px] leading-4 text-muted-foreground [@media(hover:hover)]:hidden">{tile.title}</span>
     </>
   )
