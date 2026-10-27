@@ -36,13 +36,13 @@ function Tile({ tile }: { tile: BookmarkTile }) {
     : <Link href={tile.href} aria-label={tile.title} className={className}>{face}</Link>
 }
 
-export function BookmarkGrid({ tiles }: { tiles: BookmarkTile[] }) {
+export function BookmarkGrid({ tiles, filterable = true }: { tiles: BookmarkTile[]; filterable?: boolean }) {
   const [filter, setFilter] = useState("all")
   const kinds = [...new Map(tiles.map((tile) => [tile.kind, tile.label])).entries()]
   const shown = filter === "all" ? tiles : tiles.filter((tile) => tile.kind === filter)
   return (
     <div className="space-y-5">
-      {kinds.length > 1 && (
+      {filterable && kinds.length > 1 && (
         <div role="group" aria-label="Filter bookmarks" className="flex flex-wrap gap-1.5">
           {[["all", "All"], ...kinds].map(([key, label]) => (
             <button key={key} type="button" aria-pressed={filter === key} onClick={() => setFilter(key)}
