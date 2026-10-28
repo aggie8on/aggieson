@@ -4,8 +4,9 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { BlogShare } from "@/components/blog-share"
 import { ContentMedia } from "@/components/content-media"
+import { InlineRichText } from "@/components/inline-rich-text"
 import { PageNav } from "@/components/page-nav"
-import { getWriting } from "@/lib/portfolio-data"
+import { getIcons, getWriting } from "@/lib/portfolio-data"
 
 export const revalidate = 0
 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const { data: posts } = await getWriting()
+  const [{ data: posts }, icons] = await Promise.all([getWriting(), getIcons()])
   const index = posts.findIndex((candidate) => candidate.slug === slug)
   if (index === -1) notFound()
 
@@ -51,7 +52,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="space-y-4">
           {post.paragraphs.map((paragraph, paragraphIndex) => (
             <p key={paragraphIndex} className="whitespace-pre-wrap text-[15px] leading-7 text-foreground/90">
-              {paragraph}
+              <InlineRichText icons={icons}>{paragraph}</InlineRichText>
             </p>
           ))}
         </div>

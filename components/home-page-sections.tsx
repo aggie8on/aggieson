@@ -6,6 +6,7 @@ import { LifeEntries } from "@/components/life-entries"
 import { SocialGlassLinks } from "@/components/social-glass-links"
 import type { PortfolioItem } from "@/lib/life-content"
 import type { SiteSection } from "@/lib/site-pages"
+import { usesRichText, type IconLibrary } from "@/lib/icons"
 import type { Project } from "@/lib/projects"
 
 type Post = { slug: string; title: string; date: string }
@@ -16,7 +17,7 @@ function sectionSpacing(layout: SiteSection["layout"]) {
   return "space-y-3"
 }
 
-export function HomePageSections({ sections, posts, lifeItems, projectItems }: { sections: SiteSection[]; posts: Post[]; lifeItems: PortfolioItem[]; projectItems?: Project[] }) {
+export function HomePageSections({ sections, posts, lifeItems, projectItems, icons = {} }: { sections: SiteSection[]; posts: Post[]; lifeItems: PortfolioItem[]; projectItems?: Project[]; icons?: IconLibrary }) {
   return (
     <div className="space-y-12 md:space-y-14">
       {sections.filter((section) => section.visible).map((section) => {
@@ -34,8 +35,8 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems }: {
                 </div>
               </div>
               <div className={(section.layout === "split" ? "grid gap-4 sm:grid-cols-[1fr_0.8fr]" : "max-w-xl space-y-3") + " !mt-[60px]"}>
-                {section.text && <p className="text-sm leading-[1.65] text-muted-foreground">{section.text.replace(/^Human designer\.\s*/i, "").split("Toothless").map((part, index, all) => <span key={index}>{part}{index < all.length - 1 && <a href="https://www.toothless.design" target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Toothless</a>}</span>)}</p>}
-                {section.body && <p className="text-sm leading-[1.65] text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.body}</InlineRichText></p>}
+                {section.text && <p className="text-sm leading-[1.65] text-muted-foreground">{usesRichText(section.text) ? <InlineRichText icons={icons} inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText> : section.text.replace(/^Human designer\.\s*/i, "").split("Toothless").map((part, index, all) => <span key={index}>{part}{index < all.length - 1 && <a href="https://www.toothless.design" target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Toothless</a>}</span>)}</p>}
+                {section.body && <p className="text-sm leading-[1.65] text-muted-foreground"><InlineRichText icons={icons} inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.body}</InlineRichText></p>}
               </div>
             </section>
           )
@@ -61,7 +62,7 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems }: {
           )
         }
         if (section.type === "image") {
-          return <section key={section.id} className={sectionSpacing(section.layout)}>{section.title && <h2 className="text-sm font-medium text-muted-foreground">{section.title}</h2>}{section.image && <img src={section.image} alt={section.title || "Portfolio image"} className={section.layout === "wide" ? "w-full object-cover" : "max-h-[28rem] w-full object-cover"} />}{section.text && <p className="text-sm leading-6 text-muted-foreground"><InlineRichText inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText></p>}</section>
+          return <section key={section.id} className={sectionSpacing(section.layout)}>{section.title && <h2 className="text-sm font-medium text-muted-foreground">{section.title}</h2>}{section.image && <img src={section.image} alt={section.title || "Portfolio image"} className={section.layout === "wide" ? "w-full object-cover" : "max-h-[28rem] w-full object-cover"} />}{section.text && <p className="text-sm leading-6 text-muted-foreground"><InlineRichText icons={icons} inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText></p>}</section>
         }
         if (section.type === "links") {
           return <section key={section.id} className={sectionSpacing(section.layout)}>{section.title && <h2 className="text-sm font-medium text-muted-foreground">{section.title}</h2>}{section.text && <p className="text-sm leading-6 text-muted-foreground">{section.text}</p>}{section.body && <a className="inline-flex items-center gap-1 text-sm underline underline-offset-4" href={section.body} target="_blank" rel="noreferrer">Open link <ArrowUpRight size={13} /></a>}</section>

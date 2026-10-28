@@ -1,14 +1,15 @@
 import { HomePageSections } from "@/components/home-page-sections"
-import { getLifeItems, getProjects, getSiteSections, getWriting } from "@/lib/portfolio-data"
+import { getIcons, getLifeItems, getProjects, getSiteSections, getWriting } from "@/lib/portfolio-data"
 
 export const revalidate = 0
 
 export default async function HomePage() {
-  const [sections, writing, projects, life] = await Promise.all([
+  const [sections, writing, projects, life, icons] = await Promise.all([
     getSiteSections("home"),
     getWriting(),
     getProjects(),
     getLifeItems({ limit: 8, featuredFirst: true }),
+    getIcons(),
   ])
 
   const posts = writing.data.slice(0, 3).map((post) => ({ slug: post.slug, title: post.title, date: post.dateShort }))
@@ -16,7 +17,7 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-10 sm:px-6 md:pt-14">
-      <HomePageSections sections={sections} posts={posts} lifeItems={life.data} projectItems={featuredProjects} />
+      <HomePageSections sections={sections} posts={posts} lifeItems={life.data} projectItems={featuredProjects} icons={icons} />
     </main>
   )
 }

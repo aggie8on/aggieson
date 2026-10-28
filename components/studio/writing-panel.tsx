@@ -3,6 +3,7 @@
 import { useMemo, useState, type FormEvent } from "react"
 import { ArrowLeft, ArrowUpRight, Plus, Save } from "lucide-react"
 import { removeItem, saveItem, type PanelProps } from "@/components/studio/api"
+import { RichTextField } from "@/components/studio/rich-field"
 import { DeleteButton, EmptyState, Field, MediaField, Notice, PanelHeader, StatusChip, StatusSwitch, inputClass, primaryButton, secondaryButton, textareaClass, type Message } from "@/components/studio/ui"
 import { formatDate, readingTime, slugify, type PortfolioItem } from "@/lib/life-content"
 
@@ -78,7 +79,7 @@ export function WritingPanel({ items, onChanged }: PanelProps) {
           <Field label="Web address" hint={draft.id ? "Changing this breaks links people already have." : "Created from the title."}><input value={draft.slug} onChange={(event) => { set("slug", slugify(event.target.value)); set("slugTouched", true) }} className={inputClass} placeholder="auto-from-title" /></Field>
         </div>
         <Field label="Summary" hint="Shown in the writing list. Leave blank to use the first lines of the post."><textarea rows={2} value={draft.excerpt} onChange={(event) => set("excerpt", event.target.value)} className={textareaClass} /></Field>
-        <Field label="Post" hint={`Leave a blank line between paragraphs. ${reading.words} words · ${reading.label}.`}><textarea rows={18} value={draft.body} onChange={(event) => set("body", event.target.value)} className={textareaClass} placeholder="Start writing…" /></Field>
+        <RichTextField label="Post" hint={`Leave a blank line between paragraphs. ${reading.words} words · ${reading.label}.`} rows={18} value={draft.body} onChange={(value) => set("body", value)} placeholder="Start writing…" />
         <MediaField label="Audio, video or GIF (optional)" hint="Add a recording of the post for people to listen to, or a GIF or video to go with it." type={draft.mediaType} url={draft.mediaUrl} onChange={(type, url) => { set("mediaType", type); set("mediaUrl", url) }} folder="writing" onError={(text) => setMessage({ tone: "error", text })} allow={["audio", "video", "gif"]} />
         <StatusSwitch published={draft.published} onChange={(value) => set("published", value)} />
         <Notice message={message} />

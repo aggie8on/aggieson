@@ -3,6 +3,7 @@ import { blogPosts } from "@/lib/blog-data"
 import { projects as staticProjects, type Project } from "@/lib/projects"
 import { ITEM_COLUMNS, PUBLIC_LIFE_TYPES, formatDate, readingTime, type PortfolioItem } from "@/lib/life-content"
 import { defaultSitePages, normalizeSections, type SiteSection } from "@/lib/site-pages"
+import { normalizeIcons, plainText, toLibrary, type IconLibrary } from "@/lib/icons"
 
 /**
  * The database is the single source of truth. The built-in content in lib/blog-data.ts
@@ -41,7 +42,7 @@ function toWriting(row: PortfolioItem): WritingPost {
   return {
     slug: row.slug,
     title: row.title,
-    excerpt: row.excerpt || paragraphs[0] || "",
+    excerpt: plainText(row.excerpt || paragraphs[0] || ""),
     paragraphs,
     readTime: readingTime(body).label,
     dateLong: formatDate(dateValue, "long"),
@@ -58,7 +59,7 @@ function staticWriting(): WritingPost[] {
     return {
       slug: post.slug,
       title: post.title,
-      excerpt: post.content[0] ?? "",
+      excerpt: plainText(post.content[0] ?? ""),
       paragraphs: post.content,
       readTime: post.readTime,
       dateLong: post.date,
@@ -146,5 +147,15 @@ export async function getSiteSections(slug: keyof typeof defaultSitePages): Prom
     return data?.sections ? normalizeSections(data.sections, fallback) : fallback
   } catch {
     return fallback
+  }
+}
+
+export async function getIcons(): Promise<IconLibrary> {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase.from("site_pages").select("sections").eq("slug", "icons").maybeSingle()
+    return toLibrary(normalizeIcons(data?.sections))
+  } catch {
+    return {}
   }
 }
