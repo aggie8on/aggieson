@@ -36,10 +36,11 @@ function newestFirst(a: PortfolioItem, b: PortfolioItem) {
  * Used on the Life page, and in compact form (no headings or filters) in the homepage's "Life, lately".
  */
 export function LifeEntries({ items, compact = false }: { items: PortfolioItem[]; compact?: boolean }) {
+  // On the homepage, saved X posts already have their own "From X" section, so they are not repeated here.
   const bookmarks = items.filter((item) => groupOf(item) === "bookmarks").sort(newestFirst)
   const lifeLog = items.filter((item) => groupOf(item) === "lifelog").sort(newestFirst)
 
-  const posts = bookmarks.filter((item) => readTweet(item.content))
+  const posts = compact ? [] : bookmarks.filter((item) => readTweet(item.content))
   const tiles = bookmarks.filter((item) => !readTweet(item.content)).map(toTile)
 
   const notes = lifeLog.filter((item) => getKind(item.item_type).key === "note").sort((a, b) => Number(b.featured) - Number(a.featured))

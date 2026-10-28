@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react"
-import { X } from "lucide-react"
+import { Lock, X } from "lucide-react"
 import Image from "next/image"
 import type { Project } from "@/lib/projects"
 import { Button } from "@/components/ui/button"
+import { BlurredText } from "@/components/project-lock"
 
 interface ProjectModalProps {
   project: Project | null
@@ -81,7 +82,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       >
         <div className="glass-bar sticky top-0 z-10 flex items-center justify-between rounded-t-2xl px-4 py-2.5 md:px-5">
           <div className="flex min-w-0 items-center gap-3">
-            <h2 id="project-modal-title" className="text-base md:text-lg font-medium tracking-[-0.02em]">{project.title}</h2>
+            <h2 id="project-modal-title" className="flex items-center gap-2 text-base md:text-lg font-medium tracking-[-0.02em]">{project.title}{project.incomplete && <Lock size={14} strokeWidth={1.8} role="img" aria-label="Not complete yet" className="shrink-0 text-muted-foreground" />}</h2>
             <span className="text-sm text-muted-foreground">• {project.year}</span>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
@@ -92,7 +93,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
         <div className="p-4 md:p-6 space-y-5">
           <p className="mx-auto max-w-xl text-center text-sm leading-relaxed text-foreground/75">
-            {project.description}
+            {project.incomplete ? <BlurredText>{project.description}</BlurredText> : project.description}
           </p>
 
           <div className="space-y-4">
@@ -107,6 +108,16 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 />
               </div>
             ))}
+            {project.incomplete && (
+              <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border/60 bg-foreground/5" role="img" aria-label="More of this project is hidden until it is complete">
+                {/* Only the first image is ever sent, so the glass sits over a heavily blurred copy of it. */}
+                {project.images[0] && <Image src={project.images[0]} alt="" fill aria-hidden="true" className="scale-125 object-cover blur-2xl" sizes="624px" />}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 border border-white/30 bg-white/25 backdrop-blur-xl dark:border-white/10 dark:bg-black/30">
+                  <span className="flex size-12 items-center justify-center rounded-full border border-white/40 bg-white/40 shadow-sm backdrop-blur-md dark:border-white/15 dark:bg-white/10"><Lock size={20} strokeWidth={1.6} aria-hidden="true" className="text-foreground" /></span>
+                  <span className="text-xs text-foreground/70">Not complete yet{project.hiddenImages ? ` · ${project.hiddenImages} more ${project.hiddenImages === 1 ? "image" : "images"} to come` : ""}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

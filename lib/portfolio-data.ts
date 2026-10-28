@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { blogPosts } from "@/lib/blog-data"
-import { projects as staticProjects, type Project } from "@/lib/projects"
+import { maskText, projects as staticProjects, type Project } from "@/lib/projects"
 import { ITEM_COLUMNS, PUBLIC_LIFE_TYPES, formatDate, readingTime, type PortfolioItem } from "@/lib/life-content"
 import { defaultSitePages, normalizeSections, withTweetsSection, type SiteSection } from "@/lib/site-pages"
 import { normalizeIcons, plainText, toLibrary, type IconLibrary } from "@/lib/icons"
@@ -89,14 +89,20 @@ export async function getWriting(): Promise<Loaded<WritingPost[]>> {
 function toProject(row: PortfolioItem): SiteProject {
   const gallery = Array.isArray(row.content?.images) ? row.content.images.filter((image): image is string => typeof image === "string" && image !== "") : []
   const cover = row.cover_image_url ?? ""
+  const image = cover || gallery[0] || ""
+  const images = gallery.length ? gallery : cover ? [cover] : []
+  const incomplete = row.content?.incomplete === true
   return {
     id: row.slug,
     title: row.title,
-    description: row.excerpt ?? "",
+    // An unfinished project only ever sends its first image and a same-shaped stand-in for the text.
+    description: incomplete ? maskText(row.excerpt ?? "") : row.excerpt ?? "",
     year: str(row.content?.year),
     category: row.category || "Project",
-    image: cover || gallery[0] || "",
-    images: gallery.length ? gallery : cover ? [cover] : [],
+    image,
+    images: incomplete ? (image ? [image] : []) : images,
+    incomplete,
+    hiddenImages: incomplete ? Math.max(images.length - 1, 0) : undefined,
     featured: row.featured,
   }
 }

@@ -4,6 +4,7 @@ import { useCallback, useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight, AudioLines, Bike, Heart, Lightbulb, Smartphone, Sparkles } from "lucide-react"
 import { ProjectModal } from "@/components/project-modal"
+import { BlurredText, LockBadge } from "@/components/project-lock"
 import type { Project } from "@/lib/projects"
 
 
@@ -42,10 +43,10 @@ export function HomeSelectedWork({ projectItems = [] }: { projectItems?: Project
               <span className="mt-1 text-muted-foreground transition-colors group-hover:text-foreground"><CategoryIcon category={project.category} /></span>
               <span className="min-w-0">
                 <span className="flex items-baseline justify-between gap-3">
-                  <span className="text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">{project.title}</span>
+                  <span className="text-sm font-medium tracking-[-0.02em] transition-colors group-hover:text-muted-foreground">{project.title}{project.incomplete && <LockBadge />}</span>
                   <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{project.year}</span>
                 </span>
-                <span className="mt-1 block max-w-xl text-[0.92rem] leading-[1.55] text-muted-foreground">{project.description}</span>
+                <span className="mt-1 block max-w-xl text-[0.92rem] leading-[1.55] text-muted-foreground">{project.incomplete ? <BlurredText>{project.description}</BlurredText> : project.description}</span>
               </span>
               <span className="mt-0.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"><ArrowUpRight size={14} strokeWidth={1.5} /></span>
             </button>
