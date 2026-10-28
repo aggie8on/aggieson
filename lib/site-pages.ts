@@ -1,4 +1,4 @@
-export type SiteSectionType = "intro" | "projects" | "writing" | "life" | "text" | "image" | "links"
+export type SiteSectionType = "intro" | "projects" | "writing" | "life" | "tweets" | "text" | "image" | "links"
 
 export type SiteSection = {
   id: string
@@ -26,6 +26,7 @@ export const defaultSitePages: Record<string, SitePage> = {
       { id: "projects", type: "projects", title: "Selected projects", eyebrow: "", text: "", body: "", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
       { id: "writing", type: "writing", title: "Recent writing", eyebrow: "", text: "", body: "", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
       { id: "life", type: "life", title: "Life, lately", eyebrow: "", text: "", body: "", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
+      { id: "tweets", type: "tweets", title: "From X", eyebrow: "", text: "", body: "", image: "", inlineIconSvg: "", inlineIconUrl: "", visible: true, layout: "stack" },
     ],
   },
   projects: {
@@ -59,7 +60,7 @@ export function normalizeSections(value: unknown, fallback: SiteSection[]): Site
   return value.filter((item): item is SiteSection => Boolean(item && typeof item === "object" && typeof item.id === "string" && typeof item.type === "string"))
     .map((item) => ({
       id: item.id,
-      type: (["intro", "projects", "writing", "life", "text", "image", "links"].includes(item.type) ? item.type : "text") as SiteSectionType,
+      type: (["intro", "projects", "writing", "life", "tweets", "text", "image", "links"].includes(item.type) ? item.type : "text") as SiteSectionType,
       title: typeof item.title === "string" ? item.title : "",
       role: typeof item.role === "string" ? item.role : "",
       eyebrow: typeof item.eyebrow === "string" ? item.eyebrow : "",
@@ -71,4 +72,16 @@ export function normalizeSections(value: unknown, fallback: SiteSection[]): Site
       visible: item.visible !== false,
       layout: (["stack", "split", "wide", "compact"].includes(item.layout) ? item.layout : "stack") as SiteSection["layout"],
     }))
+}
+
+/**
+ * The homepage saved in the database predates the X posts section, so add it after "Life, lately" when it is missing.
+ * Nothing is written back: it only affects what visitors see.
+ */
+export function withTweetsSection(sections: SiteSection[]): SiteSection[] {
+  if (sections.some((section) => section.type === "tweets")) return sections
+  const tweets = defaultSitePages.home.sections.find((section) => section.type === "tweets")!
+  const lifeAt = sections.findIndex((section) => section.type === "life")
+  if (lifeAt === -1) return [...sections, tweets]
+  return [...sections.slice(0, lifeAt + 1), tweets, ...sections.slice(lifeAt + 1)]
 }

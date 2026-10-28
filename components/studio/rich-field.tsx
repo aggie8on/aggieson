@@ -65,7 +65,7 @@ export function RichTextField({ label, hint, value, onChange, rows = 4, placehol
     setLinking(false); setUrl(""); setLinkError("")
   }
 
-  const used = [...value.matchAll(/\{\{icon:([a-z0-9-]+)\}\}/g)].map((match) => match[1])
+  const used = [...value.matchAll(/\{\{icon:([a-z0-9-]+)(?:@\d+(?:\.\d+)?)?\}\}/g)].map((match) => match[1])
   const missing = [...new Set(used.filter((name) => !library[name]))]
   const showPreview = usesRichText(value)
 

@@ -4,30 +4,31 @@ import { useMemo, useState, type FormEvent } from "react"
 import { ArrowLeft, ArrowUpRight, Loader2, Plus, RefreshCw, Save } from "lucide-react"
 import { fetchLinkPreview, removeItem, saveItem, type PanelProps } from "@/components/studio/api"
 import { RichTextField } from "@/components/studio/rich-field"
-import { DeleteButton, EmptyState, Field, ImageField, Notice, PanelHeader, StatusChip, StatusSwitch, Toggle, inputClass, primaryButton, secondaryButton, textareaClass, type Message } from "@/components/studio/ui"
+import { DeleteButton, EmptyState, Field, GalleryField, ImageField, MediaField, Notice, PanelHeader, StatusChip, StatusSwitch, Toggle, inputClass, primaryButton, secondaryButton, textareaClass, type Message } from "@/components/studio/ui"
 import { KindIcon } from "@/components/life-icons"
-import { SpotifyEmbed, TweetCard } from "@/components/embeds"
-import { hostOf, parseSpotifyUrl, parseTweetUrl, readTweet } from "@/lib/embeds"
-import { LIFE_KINDS, PUBLIC_LIFE_TYPES, formatDate, getKind, groupOf, readMeta, slugify, uniqueSlug, type LifeGroup, type LifeKind, type PortfolioItem } from "@/lib/life-content"
+import { TweetCard } from "@/components/embeds"
+import { hostOf, parseTweetUrl, readTweet } from "@/lib/embeds"
+import { LIFE_KINDS, PUBLIC_LIFE_TYPES, audioOf, formatDate, getKind, groupOf, photosOf, readMeta, slugify, uniqueSlug, type LifeGroup, type LifeKind, type PortfolioItem } from "@/lib/life-content"
 
 type Draft = {
   id?: string; kind: LifeKind; title: string; slug: string; slugTouched: boolean; summary: string; body: string
-  meta: Record<string, string>; image: string; link: string; date: string
+  meta: Record<string, string>; image: string; images: string[]; audio: string; link: string; date: string
   owned: boolean; featured: boolean; published: boolean; extra: Record<string, unknown>
 }
 
 const today = () => new Date().toISOString().slice(0, 10)
 
 function blankDraft(kind: LifeKind): Draft {
-  return { kind, title: "", slug: "", slugTouched: false, summary: "", body: "", meta: {}, image: "", link: "", date: today(), owned: false, featured: false, published: false, extra: {} }
+  return { kind, title: "", slug: "", slugTouched: false, summary: "", body: "", meta: {}, image: "", images: [], audio: "", link: "", date: today(), owned: false, featured: false, published: false, extra: {} }
 }
 
 function toDraft(item: PortfolioItem): Draft {
-  const { body, meta: _meta, media_type: _mediaType, media_url: _mediaUrl, ...extra } = item.content
-  void _meta; void _mediaType; void _mediaUrl
+  const { body, meta: _meta, media_type: _mediaType, media_url: _mediaUrl, audio_url: _audioUrl, images: _images, ...extra } = item.content
+  void _meta; void _mediaType; void _mediaUrl; void _audioUrl; void _images
+  const config = getKind(item.item_type)
   return {
     id: item.id, kind: getKind(item.item_type).key, title: item.title, slug: item.slug, slugTouched: true, summary: item.excerpt ?? "",
-    body: typeof body === "string" ? body : "", meta: readMeta(item), image: item.cover_image_url ?? "", link: item.external_url ?? "",
+    body: typeof body === "string" ? body : "", meta: readMeta(item), image: item.cover_image_url ?? "", images: config.gallery ? photosOf(item) : [], audio: config.audio ? audioOf(item) : "", link: item.external_url ?? "",
     date: (item.published_at ?? item.created_at).slice(0, 10), owned: item.is_owned, featured: item.featured, published: item.published, extra,
   }
 }
@@ -63,19 +64,12 @@ export function CollectionPanel({ items, onChanged, group }: PanelProps & { grou
     setDraft(next); setPicking(false); setMessage(null); setLinkNote(null); setFetching(false)
   }
 
-  /** Looks up an X post or Spotify link and fills in what it can. */
+  /** Looks up an X post link and fills in what it can. */
   async function lookup() {
     if (!draft) return
     const url = draft.link.trim()
-    const config = getKind(draft.kind)
     if (!url) { setLinkNote(null); return }
-    const isTweet = Boolean(parseTweetUrl(url))
-    const isSpotify = Boolean(parseSpotifyUrl(url))
-    if (config.linkKind === "spotify" && !isSpotify) {
-      setLinkNote({ tone: "error", text: "That doesn't look like a Spotify link. In Spotify, choose Share, then Copy link." })
-      return
-    }
-    if (!isTweet && !isSpotify) {
+    if (!parseTweetUrl(url)) {
       setLinkNote(null)
       setDraft((current) => (current ? { ...current, extra: withoutTweet(current.extra) } : current))
       return
@@ -106,8 +100,9 @@ export function CollectionPanel({ items, onChanged, group }: PanelProps & { grou
     const tweetRef = parseTweetUrl(link)
 
     if (config.linkRequired && !link) { setMessage({ tone: "error", text: `Add a link: ${config.linkLabel?.toLowerCase()}.` }); return }
-    if (config.linkKind === "spotify" && !parseSpotifyUrl(link)) { setMessage({ tone: "error", text: "That doesn't look like a Spotify link. In Spotify, choose Share, then Copy link." }); return }
-    if (config.imageRequired && !draft.image.trim()) { setMessage({ tone: "error", text: "Add a photo first." }); return }
+    if (config.gallery && draft.images.length === 0) { setMessage({ tone: "error", text: "Upload at least one photo first." }); return }
+    if (config.audio && !draft.audio && !link) { setMessage({ tone: "error", text: "Upload the song's audio file first." }); return }
+    if (config.imageRequired && !config.gallery && !draft.image.trim()) { setMessage({ tone: "error", text: "Add a photo first." }); return }
     if (config.bodyRequired && !draft.body.trim()) { setMessage({ tone: "error", text: "Write the note first." }); return }
     if (!draft.title.trim() && !config.titleOptional) { setMessage({ tone: "error", text: `Add a ${config.titleLabel.toLowerCase()} first.` }); return }
 
@@ -133,13 +128,16 @@ export function CollectionPanel({ items, onChanged, group }: PanelProps & { grou
     const content: Record<string, unknown> = { ...withoutTweet(draft.extra), body: draft.body }
     if (Object.keys(meta).length) content.meta = meta
     if (tweet) content.tweet = tweet
+    if (config.gallery) content.images = draft.images
+    if (config.audio && draft.audio) { content.media_type = "audio"; content.media_url = draft.audio }
 
     const existing = items.find((item) => item.id === draft.id)
     const slug = draft.id ? slugify(draft.slug || title) : uniqueSlug(draft.slug || title, items)
     const result = await saveItem({
       title, slug, item_type: draft.kind, category: config.plural,
       excerpt: draft.summary.trim(), content,
-      cover_image_url: config.imageLabel ? draft.image.trim() || null : null,
+      // A photo group's first photo is its cover, the one that stands in for the group.
+      cover_image_url: config.gallery ? draft.images[0] ?? null : config.imageLabel ? draft.image.trim() || null : null,
       external_url: config.linkLabel ? link || null : null,
       published: draft.published, featured: draft.featured, is_owned: config.ownable ? draft.owned : false, sort_order: 0,
       published_at: config.dateLabel ? `${draft.date || today()}T12:00:00Z` : (existing?.published_at ?? new Date().toISOString()),
@@ -165,17 +163,15 @@ export function CollectionPanel({ items, onChanged, group }: PanelProps & { grou
     const config = getKind(draft.kind)
     const err = (text: string) => setMessage({ tone: "error", text })
     const tweet = parseTweetUrl(draft.link) ? readTweet(draft.extra) : null
-    const spotify = parseSpotifyUrl(draft.link)
     const linkBlock = config.linkLabel && (
       <div className="space-y-3">
         <Field label={config.linkLabel} required={config.linkRequired} hint={config.linkHint}>
-          <input type="url" value={draft.link} onChange={(event) => { set("link", event.target.value); setLinkNote(null) }} onBlur={() => void lookup()} className={inputClass} placeholder={config.linkKind === "spotify" ? "https://open.spotify.com/playlist/…" : "https://…"} />
+          <input type="url" value={draft.link} onChange={(event) => { set("link", event.target.value); setLinkNote(null) }} onBlur={() => void lookup()} className={inputClass} placeholder="https://…" />
         </Field>
         {fetching && <p className="inline-flex items-center gap-2 text-xs text-muted-foreground"><Loader2 size={13} className="animate-spin" aria-hidden="true" /> Loading preview…</p>}
         <Notice message={linkNote} />
         {tweet && <div className="max-w-sm"><TweetCard tweet={tweet} /></div>}
-        {spotify && <SpotifyEmbed url={draft.link} title={draft.title || undefined} />}
-        {(tweet || spotify || parseTweetUrl(draft.link)) && !fetching && (
+        {parseTweetUrl(draft.link) && !fetching && (
           <button type="button" onClick={() => void lookup()} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"><RefreshCw size={12} aria-hidden="true" /> Refresh details from the link</button>
         )}
       </div>
@@ -194,7 +190,13 @@ export function CollectionPanel({ items, onChanged, group }: PanelProps & { grou
           </div>
         )}
         {config.dateLabel && <Field label={config.dateLabel}><input type="date" value={draft.date} onChange={(event) => set("date", event.target.value)} className={`${inputClass} sm:max-w-xs`} /></Field>}
-        {config.imageLabel && <ImageField label={config.imageLabel} value={draft.image} onChange={(url) => set("image", url)} folder={`life/${config.key}`} onError={err} hint={config.imageHint} />}
+        {config.audio && (
+          <MediaField label="Audio file" hint="MP3, M4A, WAV or OGG. It plays in the site's own player, and tracks you upload appear together there." type={draft.audio ? "audio" : "none"} url={draft.audio} allow={["audio"]} folder="life/music" onError={err} onChange={(_type, url) => set("audio", url)} />
+        )}
+        {config.gallery && (
+          <GalleryField label={config.imageLabel ?? "Photos"} hint="Select as many as you like at once. The first photo stands in for the whole group on the site, so put your favourite first. Use the arrows to reorder." coverNote="Cover" images={draft.images} onChange={(images) => set("images", images)} folder="life/photo" onError={err} />
+        )}
+        {config.imageLabel && !config.gallery && <ImageField label={config.imageLabel} value={draft.image} onChange={(url) => set("image", url)} folder={`life/${config.key}`} onError={err} hint={config.imageHint} />}
         {config.summaryLabel && <Field label={config.summaryLabel}><textarea rows={2} value={draft.summary} onChange={(event) => set("summary", event.target.value)} className={textareaClass} placeholder={config.summaryPlaceholder} /></Field>}
         {config.meta.filter((field) => field.list).map((field) => (
           <Field key={field.key} label={field.label} hint="One per line."><textarea rows={6} value={draft.meta[field.key] ?? ""} onChange={(event) => set("meta", { ...draft.meta, [field.key]: event.target.value })} className={textareaClass} placeholder={field.placeholder} /></Field>

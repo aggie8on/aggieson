@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import type { IconLibrary } from "@/lib/icons"
+import { clampIconSize, type IconLibrary } from "@/lib/icons"
 
 export function safeSvg(source: string) {
   if (!source || !/<svg[\s>]/i.test(source)) return ""
@@ -11,8 +11,8 @@ export function safeSvg(source: string) {
     .replace(/<\/?(?!svg\b|g\b|path\b|circle\b|rect\b|line\b|polyline\b|polygon\b|ellipse\b|defs\b|linearGradient\b|radialGradient\b|stop\b|title\b|desc\b)[a-z][^>]*>/gi, "")
 }
 
-// [text](link), {{icon:name}}, and the older {{icon}}.
-const TOKEN = /\[([^\]]+)\]\(((?:https?:\/\/|mailto:|\/)[^\s)]*)\)|\{\{icon(?::([a-z0-9-]+))?\}\}/g
+// [text](link), {{icon:name}}, {{icon:name@2}} (a one-off size) and the older {{icon}}.
+const TOKEN = /\[([^\]]+)\]\(((?:https?:\/\/|mailto:|\/)[^\s)]*)\)|\{\{icon(?::([a-z0-9-]+)(?:@(\d+(?:\.\d+)?))?)?\}\}/g
 
 /**
  * Turns [text](link) into links and {{icon:name}} into inline icons.
@@ -26,13 +26,14 @@ export function InlineRichText({ children, icons = {}, inlineIconSvg = "", inlin
 }) {
   let key = 0
 
-  function renderIcon(name: string | undefined, insideLink: boolean): ReactNode {
+  function renderIcon(name: string | undefined, sizeOverride: string | undefined, insideLink: boolean): ReactNode {
     const entry = name ? icons[name] : icons["icon"]
     const svg = safeSvg(entry?.svg ?? (name ? "" : inlineIconSvg))
     if (!svg) return null
     const url = entry?.url || (name ? "" : inlineIconUrl)
     const label = entry?.name ?? "icon"
-    const glyph = <span key={key++} aria-hidden="true" className="mx-0.5 inline-flex size-[1em] translate-y-[0.12em] items-center justify-center align-baseline [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
+    const size = clampIconSize(sizeOverride, entry?.size ?? 1)
+    const glyph = <span key={key++} aria-hidden="true" style={{ width: `${size}em`, height: `${size}em` }} className="mx-0.5 inline-flex shrink-0 items-center justify-center align-middle [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
     if (insideLink || !url) return glyph
     return <a key={key++} href={url} target="_blank" rel="noopener noreferrer" aria-label={label} className="inline-flex items-center text-foreground transition-opacity hover:opacity-70">{glyph}</a>
   }
@@ -53,7 +54,7 @@ export function InlineRichText({ children, icons = {}, inlineIconSvg = "", inlin
           </a>,
         )
       } else {
-        pieces.push(renderIcon(match[3], insideLink))
+        pieces.push(renderIcon(match[3], match[4], insideLink))
       }
       last = pattern.lastIndex
     }

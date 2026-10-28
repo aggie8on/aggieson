@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { HomeSelectedWork } from "@/components/home-selected-work"
+import { HomeTweets } from "@/components/home-tweets"
 import { InlineRichText } from "@/components/inline-rich-text"
 import { LifeEntries } from "@/components/life-entries"
 import { SocialGlassLinks } from "@/components/social-glass-links"
@@ -8,6 +9,7 @@ import type { PortfolioItem } from "@/lib/life-content"
 import type { SiteSection } from "@/lib/site-pages"
 import { usesRichText, type IconLibrary } from "@/lib/icons"
 import type { Project } from "@/lib/projects"
+import type { TweetPost } from "@/lib/portfolio-data"
 
 type Post = { slug: string; title: string; date: string }
 
@@ -17,7 +19,7 @@ function sectionSpacing(layout: SiteSection["layout"]) {
   return "space-y-3"
 }
 
-export function HomePageSections({ sections, posts, lifeItems, projectItems, icons = {} }: { sections: SiteSection[]; posts: Post[]; lifeItems: PortfolioItem[]; projectItems?: Project[]; icons?: IconLibrary }) {
+export function HomePageSections({ sections, posts, lifeItems, projectItems, tweetPosts = [], icons = {} }: { sections: SiteSection[]; posts: Post[]; lifeItems: PortfolioItem[]; projectItems?: Project[]; tweetPosts?: TweetPost[]; icons?: IconLibrary }) {
   return (
     <div className="space-y-12 md:space-y-14">
       {sections.filter((section) => section.visible).map((section) => {
@@ -61,6 +63,7 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems, ico
             </section>
           )
         }
+        if (section.type === "tweets") return <HomeTweets key={section.id} posts={tweetPosts} title={section.title} />
         if (section.type === "image") {
           return <section key={section.id} className={sectionSpacing(section.layout)}>{section.title && <h2 className="text-sm font-medium text-muted-foreground">{section.title}</h2>}{section.image && <img src={section.image} alt={section.title || "Portfolio image"} className={section.layout === "wide" ? "w-full object-cover" : "max-h-[28rem] w-full object-cover"} />}{section.text && <p className="text-sm leading-6 text-muted-foreground"><InlineRichText icons={icons} inlineIconSvg={section.inlineIconSvg} inlineIconUrl={section.inlineIconUrl}>{section.text}</InlineRichText></p>}</section>
         }

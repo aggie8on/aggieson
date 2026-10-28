@@ -11,6 +11,15 @@ export type TweetSnapshot = {
   text: string
   image_url?: string
   created_at?: string
+  /** Counts as of when the post was saved. The homepage refreshes them periodically. */
+  replies?: number
+  reposts?: number
+  likes?: number
+}
+
+/** 1,234 becomes 1.2K, 3,400,000 becomes 3.4M. */
+export function formatCount(value: number) {
+  return new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(value)
 }
 
 export function parseTweetUrl(input: string): TweetRef | null {
@@ -65,6 +74,7 @@ export function readTweet(content: Record<string, unknown> | null | undefined): 
   const url = typeof tweet.url === "string" ? tweet.url : ""
   if (!url || !parseTweetUrl(url)) return null
   const pick = (key: string) => (typeof tweet[key] === "string" && tweet[key] !== "" ? (tweet[key] as string) : undefined)
+  const count = (key: string) => (typeof tweet[key] === "number" && Number.isFinite(tweet[key]) && (tweet[key] as number) >= 0 ? (tweet[key] as number) : undefined)
   return {
     id: pick("id") ?? "",
     url,
@@ -74,5 +84,8 @@ export function readTweet(content: Record<string, unknown> | null | undefined): 
     text,
     image_url: pick("image_url"),
     created_at: pick("created_at"),
+    replies: count("replies"),
+    reposts: count("reposts"),
+    likes: count("likes"),
   }
 }

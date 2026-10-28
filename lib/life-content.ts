@@ -60,7 +60,11 @@ export type LifeKindConfig = {
   linkRequired?: boolean
   linkHint?: string
   /** What the link is expected to be, so Studio can preview it. */
-  linkKind?: "spotify" | "any"
+  linkKind?: "any"
+  /** Photos only: the entry is a group of images. The first one stands in for the group until it is opened. */
+  gallery?: boolean
+  /** Music only: the entry has an uploaded audio file that plays in the site's own player. */
+  audio?: boolean
   dateLabel?: string
   /** Gadgets only: marks that the owner has it. */
   ownable?: boolean
@@ -112,17 +116,19 @@ export const LIFE_KINDS: LifeKindConfig[] = [
     linkLabel: "Product link (optional)", ownable: true,
   },
   {
-    key: "music", group: "lifelog", label: "Music", plural: "Music", blurb: "A playlist, album or song. Paste a Spotify link for a player.",
-    titleLabel: "Title", titlePlaceholder: "Filled in from Spotify if you leave it blank", titleOptional: true,
+    key: "music", group: "lifelog", label: "Music", plural: "Music", blurb: "A song you made or love. Upload the audio and it plays in the site's own player.",
+    titleLabel: "Track title", titlePlaceholder: "Name of the song",
     summaryLabel: "Why it's on repeat", summaryPlaceholder: "One line (optional).",
-    meta: [],
-    linkLabel: "Spotify link", linkRequired: true, linkKind: "spotify", linkHint: "Playlist, album, track, artist or podcast link from Spotify.",
+    meta: [{ key: "artist", label: "Artist", placeholder: "Who made it" }],
+    audio: true,
+    imageLabel: "Cover art (optional)", imageHint: "Shown small beside the player, in greyscale.",
+    linkLabel: "Link (optional)", linkKind: "any", linkHint: "Where to listen elsewhere, if you want to point people there.",
   },
   {
-    key: "photo", group: "lifelog", label: "Photo", plural: "Photos", blurb: "A picture from your day.",
-    titleLabel: "Caption", titlePlaceholder: "Optional", titleOptional: true,
+    key: "photo", group: "lifelog", label: "Photo group", plural: "Photos", blurb: "Photos that belong together. One stands in for the group on the homepage; the rest open in a pop-up.",
+    titleLabel: "Group name", titlePlaceholder: "Optional, like “Kampala, October”", titleOptional: true,
     meta: [{ key: "where", label: "Where", placeholder: "Optional" }],
-    imageLabel: "Photo", imageRequired: true, dateLabel: "Date taken",
+    gallery: true, imageLabel: "Photos", imageRequired: true, dateLabel: "Date taken",
   },
   {
     key: "note", group: "lifelog", label: "Note", plural: "Notes", blurb: "A small thought, pinned to the page.",
@@ -160,6 +166,21 @@ export function readMeta(item: Pick<PortfolioItem, "content">): Record<string, s
   const meta = item.content?.meta
   if (!meta || typeof meta !== "object") return {}
   return Object.fromEntries(Object.entries(meta).filter((entry): entry is [string, string] => typeof entry[1] === "string" && entry[1].trim() !== ""))
+}
+
+/** Every photo in a photo entry, cover first. Older entries with a single photo count as a group of one. */
+export function photosOf(item: Pick<PortfolioItem, "content" | "cover_image_url">): string[] {
+  const raw = item.content?.images
+  const list = Array.isArray(raw) ? raw.filter((url): url is string => typeof url === "string" && url.trim() !== "") : []
+  const cover = item.cover_image_url?.trim()
+  return cover ? [cover, ...list.filter((url) => url !== cover)] : list
+}
+
+/** The uploaded audio file of a music entry, or an empty string when it has none. */
+export function audioOf(item: Pick<PortfolioItem, "content">): string {
+  const content = item.content ?? {}
+  const url = typeof content.media_url === "string" && content.media_type === "audio" ? content.media_url : typeof content.audio_url === "string" ? content.audio_url : ""
+  return url.trim()
 }
 
 export const itemTypeLabels: Record<string, string> = {
