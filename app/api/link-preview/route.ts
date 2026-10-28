@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { hostOf, parseSpotifyUrl, parseTweetUrl, type SpotifyRef, type TweetSnapshot } from "@/lib/embeds"
+import { tweetFromFx, tweetFromOembed } from "@/lib/tweets"
 
 export const dynamic = "force-dynamic"
 
@@ -28,45 +29,6 @@ async function getJson(url: string): Promise<unknown> {
 }
 
 const str = (value: unknown) => (typeof value === "string" ? value : "")
-
-function decode(text: string) {
-  return text.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&nbsp;/g, " ")
-}
-
-async function tweetFromFx(user: string, id: string, url: string): Promise<TweetSnapshot | null> {
-  const json = (await getJson(`https://api.fxtwitter.com/${user}/status/${id}`)) as { tweet?: Record<string, unknown> }
-  const tweet = json.tweet
-  if (!tweet) return null
-  const author = (tweet.author ?? {}) as Record<string, unknown>
-  const media = (tweet.media ?? {}) as { photos?: { url?: string }[]; videos?: { thumbnail_url?: string }[] }
-  const text = str(tweet.text)
-  if (!text && !author.name) return null
-  return {
-    id,
-    url,
-    author_name: str(author.name) || str(author.screen_name) || user,
-    author_handle: str(author.screen_name) || user,
-    avatar_url: str(author.avatar_url) || undefined,
-    text,
-    image_url: str(media.photos?.[0]?.url) || str(media.videos?.[0]?.thumbnail_url) || undefined,
-    created_at: str(tweet.created_at) || undefined,
-  }
-}
-
-async function tweetFromOembed(user: string, id: string, url: string): Promise<TweetSnapshot | null> {
-  const json = (await getJson(`https://publish.twitter.com/oembed?omit_script=1&dnt=true&url=${encodeURIComponent(url)}`)) as Record<string, unknown>
-  const html = str(json.html)
-  const paragraph = html.match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? ""
-  const text = decode(paragraph.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "")).trim()
-  if (!text) return null
-  return {
-    id,
-    url,
-    author_name: str(json.author_name) || user,
-    author_handle: str(json.author_url).split("/").filter(Boolean).pop() ?? user,
-    text,
-  }
-}
 
 export async function GET(request: Request) {
   const supabase = await createClient()

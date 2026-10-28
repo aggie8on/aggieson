@@ -2,8 +2,10 @@ import { createClient } from "@/lib/supabase/server"
 import { blogPosts } from "@/lib/blog-data"
 import { projects as staticProjects, type Project } from "@/lib/projects"
 import { ITEM_COLUMNS, PUBLIC_LIFE_TYPES, formatDate, readingTime, type PortfolioItem } from "@/lib/life-content"
-import { defaultSitePages, normalizeSections, type SiteSection } from "@/lib/site-pages"
+import { defaultSitePages, normalizeSections, withTweetsSection, type SiteSection } from "@/lib/site-pages"
 import { normalizeIcons, plainText, toLibrary, type IconLibrary } from "@/lib/icons"
+import { readTweet, type TweetSnapshot } from "@/lib/embeds"
+import { refreshTweet } from "@/lib/tweets"
 
 /**
  * The database is the single source of truth. The built-in content in lib/blog-data.ts
@@ -128,6 +130,29 @@ export async function getLifeItems(options: { limit?: number; featuredFirst?: bo
   }
 }
 
+export type TweetPost = { id: string; tweet: TweetSnapshot; note: string }
+
+/** Saved X posts for the homepage: ones marked "Show on the homepage" first, then the newest. Counts are refreshed from X. */
+export async function getTweetPosts(limit = 6): Promise<Loaded<TweetPost[]>> {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.from("portfolio_items").select(ITEM_COLUMNS)
+      .eq("item_type", "bookmark").eq("published", true)
+      .order("featured", { ascending: false })
+      .order("published_at", { ascending: false }).order("created_at", { ascending: false })
+      .limit(100)
+    if (error) throw error
+    const saved = ((data ?? []) as PortfolioItem[]).flatMap((row) => {
+      const tweet = readTweet(row.content)
+      return tweet ? [{ id: row.id, tweet, note: row.excerpt ?? "" }] : []
+    }).slice(0, limit)
+    const posts = await Promise.all(saved.map(async (post) => ({ ...post, tweet: await refreshTweet(post.tweet) })))
+    return { data: posts, ok: true }
+  } catch {
+    return { data: [], ok: false }
+  }
+}
+
 export async function getLifeItem(slug: string): Promise<PortfolioItem | null> {
   try {
     const supabase = await createClient()
@@ -144,9 +169,10 @@ export async function getSiteSections(slug: keyof typeof defaultSitePages): Prom
   try {
     const supabase = await createClient()
     const { data } = await supabase.from("site_pages").select("sections").eq("slug", slug).maybeSingle()
-    return data?.sections ? normalizeSections(data.sections, fallback) : fallback
+    const sections = data?.sections ? normalizeSections(data.sections, fallback) : fallback
+    return slug === "home" ? withTweetsSection(sections) : sections
   } catch {
-    return fallback
+    return slug === "home" ? withTweetsSection(fallback) : fallback
   }
 }
 

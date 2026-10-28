@@ -1,12 +1,13 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { ArrowUpRight } from "lucide-react"
-import { SpotifyEmbed, TweetCard } from "@/components/embeds"
+import { AudioPlayer } from "@/components/audio-player"
+import { TweetCard } from "@/components/embeds"
 import { InlineRichText } from "@/components/inline-rich-text"
 import { PageNav } from "@/components/page-nav"
-import { hostOf, parseSpotifyUrl, readTweet } from "@/lib/embeds"
+import { hostOf, readTweet } from "@/lib/embeds"
 import { plainText } from "@/lib/icons"
-import { formatDate, getKind, readMeta } from "@/lib/life-content"
+import { audioOf, formatDate, getKind, photosOf, readMeta } from "@/lib/life-content"
 import { getIcons, getLifeItem } from "@/lib/portfolio-data"
 
 export const revalidate = 0
@@ -31,14 +32,15 @@ export default async function LifeItemPage({ params }: LifeItemPageProps) {
   const meta = readMeta(item)
   const body = typeof item.content?.body === "string" ? item.content.body : ""
   const tweet = readTweet(item.content)
-  const spotify = kind.linkKind === "spotify" && item.external_url ? parseSpotifyUrl(item.external_url) : null
+  const audio = kind.audio ? audioOf(item) : ""
+  const photos = kind.gallery ? photosOf(item) : []
   const metaRows = kind.meta.filter((field) => meta[field.key] && !field.list)
   if (kind.ownable) metaRows.push({ key: "status", label: "Status" })
   const metaValue = (key: string) => (key === "status" ? (item.is_owned ? "I own this" : "On my wishlist") : meta[key])
   const listFields = kind.meta.filter((field) => field.list && meta[field.key])
   const date = kind.dateLabel ? formatDate(item.published_at, "long") : ""
   const showTitle = !(kind.titleOptional && kind.key === "note" && /^note$/i.test(item.title)) && !(kind.key === "photo" && /^photo\b/i.test(item.title))
-  const linkText = tweet ? "View on X" : spotify ? "Open in Spotify" : item.external_url ? `Open ${hostOf(item.external_url) || "link"}` : ""
+  const linkText = tweet ? "View on X" : item.external_url ? `Open ${hostOf(item.external_url) || "link"}` : ""
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pb-16 pt-12 sm:px-6 md:pt-16">
@@ -51,9 +53,12 @@ export default async function LifeItemPage({ params }: LifeItemPageProps) {
         </header>
 
         {tweet && <TweetCard tweet={tweet} note={item.excerpt} />}
-        {spotify && <SpotifyEmbed url={item.external_url as string} title={item.title} height={spotify.type === "track" || spotify.type === "episode" ? 152 : 352} />}
+        {audio && <AudioPlayer tracks={[{ id: item.id, title: item.title, artist: meta.artist, src: audio, cover: item.cover_image_url || undefined }]} />}
 
-        {item.cover_image_url && <img src={item.cover_image_url} alt={item.title} loading="lazy" className="max-h-[560px] w-full rounded-lg object-cover" />}
+        {/* A photo group shows every photo whole, in colour. Everything else shows its single image. */}
+        {photos.length > 0
+          ? <ul className="space-y-4">{photos.map((src, position) => <li key={`${src}-${position}`}><img src={src} alt={`${item.title}, photo ${position + 1} of ${photos.length}`} loading={position === 0 ? "eager" : "lazy"} className="mx-auto h-auto max-h-[85vh] w-auto max-w-full rounded-lg" /></li>)}</ul>
+          : item.cover_image_url && !audio && <img src={item.cover_image_url} alt={item.title} loading="lazy" className="max-h-[560px] w-full rounded-lg object-cover" />}
 
         {metaRows.length > 0 && (
           <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 border-y border-border py-4 text-sm">
@@ -82,12 +87,11 @@ export default async function LifeItemPage({ params }: LifeItemPageProps) {
           </section>
         )}
 
-        {item.external_url && !tweet && !spotify && (
+        {item.external_url && !tweet && (
           <a href={item.external_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm underline decoration-border underline-offset-4 hover:decoration-foreground">
             {linkText} <ArrowUpRight size={14} aria-hidden="true" />
           </a>
         )}
-        {spotify && <a href={spotify.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm underline decoration-border underline-offset-4 hover:decoration-foreground">{linkText} <ArrowUpRight size={14} aria-hidden="true" /></a>}
       </article>
     </main>
   )

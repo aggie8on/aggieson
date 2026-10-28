@@ -171,8 +171,9 @@ export function MediaField({ label, hint, type, url, onChange, folder, onError, 
 }
 
 /** Ordered list of images: upload several, reorder, remove. */
-export function GalleryField({ images, onChange, folder, onError }: { images: string[]; onChange: (images: string[]) => void; folder: string; onError: (message: string) => void }) {
+export function GalleryField({ images, onChange, folder, onError, label = "Gallery images", hint = "Shown in order when someone opens the project. If empty, the cover image is used.", coverNote }: { images: string[]; onChange: (images: string[]) => void; folder: string; onError: (message: string) => void; label?: string; hint?: string; coverNote?: string }) {
   const [busy, setBusy] = useState(false)
+  const [progress, setProgress] = useState("")
   const [link, setLink] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
   async function handle(event: ChangeEvent<HTMLInputElement>) {
@@ -181,11 +182,12 @@ export function GalleryField({ images, onChange, folder, onError }: { images: st
     if (files.length === 0) return
     setBusy(true)
     const added: string[] = []
-    for (const file of files) {
+    for (const [position, file] of files.entries()) {
+      setProgress(files.length > 1 ? `Uploading ${position + 1} of ${files.length}…` : "")
       const result = await uploadFile(file, folder, ["image", "gif"])
       if (!result.ok) onError(`${file.name}: ${result.error}`); else added.push(result.data.url)
     }
-    setBusy(false)
+    setBusy(false); setProgress("")
     if (added.length) onChange([...images, ...added])
   }
   function move(index: number, direction: -1 | 1) {
@@ -198,15 +200,15 @@ export function GalleryField({ images, onChange, folder, onError }: { images: st
   return (
     <div className="space-y-3">
       <div>
-        <span className="block text-sm font-medium">Gallery images</span>
-        <span className="text-xs text-muted-foreground">Shown in order when someone opens the project. If empty, the cover image is used.</span>
+        <span className="block text-sm font-medium">{label}</span>
+        <span className="text-xs text-muted-foreground">{hint}</span>
       </div>
       {images.length > 0 && (
         <ul className="space-y-2">
           {images.map((image, index) => (
             <li key={`${image}-${index}`} className="flex items-center gap-3 rounded-md border border-border p-2">
               <img src={image} alt={`Gallery image ${index + 1}`} className="size-14 shrink-0 rounded object-cover" />
-              <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{image.split("/").pop()}</span>
+              <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{index === 0 && coverNote ? <strong className="mr-1.5 font-medium text-foreground">{coverNote}</strong> : null}{image.split("/").pop()}</span>
               <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label={`Move image ${index + 1} up`} className={iconButton}><ArrowUp size={14} aria-hidden="true" /></button>
               <button type="button" onClick={() => move(index, 1)} disabled={index === images.length - 1} aria-label={`Move image ${index + 1} down`} className={iconButton}><ArrowDown size={14} aria-hidden="true" /></button>
               <button type="button" onClick={() => onChange(images.filter((_, position) => position !== index))} aria-label={`Remove image ${index + 1}`} className={`${iconButton} hover:text-destructive`}><X size={14} aria-hidden="true" /></button>
@@ -216,7 +218,7 @@ export function GalleryField({ images, onChange, folder, onError }: { images: st
       )}
       <div className="flex flex-wrap items-center gap-2">
         <button type="button" disabled={busy} onClick={() => inputRef.current?.click()} className={secondaryButton}>
-          {busy ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <ImagePlus size={14} aria-hidden="true" />} {busy ? "Uploading…" : "Upload images"}
+          {busy ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <ImagePlus size={14} aria-hidden="true" />} {busy ? progress || "Uploading…" : "Upload images"}
         </button>
         <input ref={inputRef} type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={handle} className="sr-only" tabIndex={-1} />
         <input type="url" value={link} onChange={(event) => setLink(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); if (link.trim()) { onChange([...images, link.trim()]); setLink("") } } }} placeholder="Paste a link, press Enter" aria-label="Add gallery image by link" className={`${inputClass} max-w-xs`} />

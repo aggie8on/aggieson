@@ -1,10 +1,12 @@
 import Link from "next/link"
-import { Pin } from "lucide-react"
+import { ArrowUpRight, Pin } from "lucide-react"
+import { AudioPlayer, type Track } from "@/components/audio-player"
 import { BookmarkGrid, type BookmarkTile } from "@/components/bookmark-grid"
-import { SpotifyEmbed, TweetCard } from "@/components/embeds"
-import { faviconUrl, parseSpotifyUrl, readTweet } from "@/lib/embeds"
+import { TweetCard } from "@/components/embeds"
+import { PhotoGroups, type PhotoGroup } from "@/components/photo-groups"
+import { faviconUrl, hostOf, readTweet } from "@/lib/embeds"
 import { plainText } from "@/lib/icons"
-import { formatDate, getKind, groupOf, type PortfolioItem } from "@/lib/life-content"
+import { audioOf, formatDate, getKind, groupOf, photosOf, readMeta, type PortfolioItem } from "@/lib/life-content"
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return <h2 className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{children}</h2>
@@ -41,9 +43,25 @@ export function LifeEntries({ items, compact = false }: { items: PortfolioItem[]
   const tiles = bookmarks.filter((item) => !readTweet(item.content)).map(toTile)
 
   const notes = lifeLog.filter((item) => getKind(item.item_type).key === "note").sort((a, b) => Number(b.featured) - Number(a.featured))
-  const music = lifeLog.filter((item) => getKind(item.item_type).key === "music" && parseSpotifyUrl(item.external_url ?? ""))
-  const photos = lifeLog.filter((item) => getKind(item.item_type).key === "photo" && item.cover_image_url)
-  const hasLifeLog = notes.length + music.length + photos.length > 0
+  const songs = lifeLog.filter((item) => getKind(item.item_type).key === "music")
+  // Uploaded songs play in the site's own player. Older entries that only have a link stay as a quiet link.
+  const tracks: Track[] = songs.filter((item) => audioOf(item)).map((item) => ({
+    id: item.id,
+    title: item.title,
+    artist: readMeta(item).artist,
+    src: audioOf(item),
+    cover: item.cover_image_url || undefined,
+    note: item.excerpt || undefined,
+  }))
+  const linkedSongs = songs.filter((item) => !audioOf(item) && item.external_url)
+  const groups: PhotoGroup[] = lifeLog.filter((item) => getKind(item.item_type).key === "photo" && photosOf(item).length > 0).map((item) => ({
+    id: item.id,
+    title: /^photo\b/i.test(item.title) ? "" : item.title,
+    date: formatDate(item.published_at ?? item.created_at, "short"),
+    where: readMeta(item).where,
+    images: photosOf(item),
+  }))
+  const hasLifeLog = notes.length + tracks.length + linkedSongs.length + groups.length > 0
 
   return (
     <div className={compact ? "space-y-8" : "space-y-12"}>
@@ -80,32 +98,25 @@ export function LifeEntries({ items, compact = false }: { items: PortfolioItem[]
             </ul>
           )}
 
-          {music.length > 0 && (
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {music.map((track) => (
-                <li key={track.id}>
-                  <SpotifyEmbed url={track.external_url as string} title={track.title} />
-                  {track.excerpt && <p className="mt-1.5 px-1 text-xs leading-5 text-muted-foreground">{track.excerpt}</p>}
-                </li>
-              ))}
-            </ul>
+          {(tracks.length > 0 || linkedSongs.length > 0) && (
+            <div className="space-y-3">
+              {tracks.length > 0 && <AudioPlayer tracks={tracks} />}
+              {linkedSongs.length > 0 && (
+                <ul className="divide-y divide-border border-y border-border text-sm">
+                  {linkedSongs.map((song) => (
+                    <li key={song.id}>
+                      <a href={song.external_url as string} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 py-2.5 hover:text-muted-foreground">
+                        <span className="min-w-0 truncate">{song.title}</span>
+                        <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground">{hostOf(song.external_url as string)} <ArrowUpRight size={12} aria-hidden="true" /></span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
 
-          {photos.length > 0 && (
-            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {photos.map((photo) => (
-                <li key={photo.id}>
-                  <Link href={`/life/${photo.slug}`} className="group relative block aspect-square overflow-hidden rounded-xl border border-border bg-muted focus-visible:ring-2 focus-visible:ring-ring/40">
-                    <img src={photo.cover_image_url as string} alt={photo.title} loading="lazy" className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2.5 pt-8 text-xs leading-4 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-                      {photo.title}
-                      <span className="block text-[10px] text-white/70">{formatDate(photo.published_at ?? photo.created_at, "short")}</span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          {groups.length > 0 && <PhotoGroups groups={groups} />}
         </section>
       )}
     </div>
