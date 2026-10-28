@@ -3,6 +3,7 @@ import { Pin } from "lucide-react"
 import { BookmarkGrid, type BookmarkTile } from "@/components/bookmark-grid"
 import { SpotifyEmbed, TweetCard } from "@/components/embeds"
 import { faviconUrl, parseSpotifyUrl, readTweet } from "@/lib/embeds"
+import { plainText } from "@/lib/icons"
 import { formatDate, getKind, groupOf, type PortfolioItem } from "@/lib/life-content"
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
@@ -72,7 +73,7 @@ export function LifeEntries({ items, compact = false }: { items: PortfolioItem[]
                   <Link href={`/life/${note.slug}`} className="group relative block h-full rounded-xl border border-border bg-accent/20 p-4 pt-5 transition-colors hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring/40">
                     <Pin size={15} strokeWidth={1.5} aria-label={note.featured ? "Pinned note" : "Note"} className={`absolute right-3 top-3 rotate-45 ${note.featured ? "fill-foreground text-foreground" : "text-muted-foreground"}`} />
                     {note.title && !/^note$/i.test(note.title) && <p className="mb-1 pr-6 text-sm font-medium">{note.title}</p>}
-                    <p className="line-clamp-6 whitespace-pre-wrap pr-6 text-sm leading-6 text-foreground/90">{typeof note.content?.body === "string" ? note.content.body : note.excerpt}</p>
+                    <p className="line-clamp-6 whitespace-pre-wrap pr-6 text-sm leading-6 text-foreground/90">{plainText(typeof note.content?.body === "string" ? note.content.body : note.excerpt)}</p>
                   </Link>
                 </li>
               ))}

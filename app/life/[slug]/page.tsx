@@ -2,10 +2,12 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { ArrowUpRight } from "lucide-react"
 import { SpotifyEmbed, TweetCard } from "@/components/embeds"
+import { InlineRichText } from "@/components/inline-rich-text"
 import { PageNav } from "@/components/page-nav"
 import { hostOf, parseSpotifyUrl, readTweet } from "@/lib/embeds"
+import { plainText } from "@/lib/icons"
 import { formatDate, getKind, readMeta } from "@/lib/life-content"
-import { getLifeItem } from "@/lib/portfolio-data"
+import { getIcons, getLifeItem } from "@/lib/portfolio-data"
 
 export const revalidate = 0
 
@@ -16,13 +18,13 @@ export async function generateMetadata({ params }: LifeItemPageProps): Promise<M
   const item = await getLifeItem(slug)
   if (!item) return { title: "Not found | Aggieson" }
   const body = typeof item.content?.body === "string" ? item.content.body : ""
-  return { title: `${item.title} | Aggieson`, description: (item.excerpt || body).slice(0, 160) || undefined }
+  return { title: `${item.title} | Aggieson`, description: plainText(item.excerpt || body).slice(0, 160) || undefined }
 }
 
 export default async function LifeItemPage({ params }: LifeItemPageProps) {
   const { slug } = await params
   // Only life entries are served here, so projects and writing never appear under /life.
-  const item = await getLifeItem(slug)
+  const [item, icons] = await Promise.all([getLifeItem(slug), getIcons()])
   if (!item) notFound()
 
   const kind = getKind(item.item_type)
@@ -45,7 +47,7 @@ export default async function LifeItemPage({ params }: LifeItemPageProps) {
         <header className="space-y-3">
           <p className="text-sm text-muted-foreground">{[kind.label, date].filter(Boolean).join(" · ")}</p>
           {showTitle && <h1 className="text-3xl font-medium tracking-[-0.045em] text-balance md:text-4xl">{item.title}</h1>}
-          {item.excerpt && !tweet && <p className="max-w-xl text-base leading-6 text-muted-foreground">{item.excerpt}</p>}
+          {item.excerpt && !tweet && <p className="max-w-xl text-base leading-6 text-muted-foreground"><InlineRichText icons={icons}>{item.excerpt}</InlineRichText></p>}
         </header>
 
         {tweet && <TweetCard tweet={tweet} note={item.excerpt} />}
@@ -76,7 +78,7 @@ export default async function LifeItemPage({ params }: LifeItemPageProps) {
         {body && (
           <section className="space-y-2">
             {kind.bodyHeading && kind.bodyLabel && <h2 className="text-sm font-medium">{kind.bodyLabel}</h2>}
-            <div className="whitespace-pre-wrap text-[15px] leading-7 text-foreground/90">{body}</div>
+            <div className="whitespace-pre-wrap text-[15px] leading-7 text-foreground/90"><InlineRichText icons={icons}>{body}</InlineRichText></div>
           </section>
         )}
 

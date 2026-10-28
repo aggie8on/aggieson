@@ -3,6 +3,7 @@
 import { useMemo, useState, type FormEvent } from "react"
 import { ArrowLeft, ArrowUpRight, Loader2, Plus, RefreshCw, Save } from "lucide-react"
 import { fetchLinkPreview, removeItem, saveItem, type PanelProps } from "@/components/studio/api"
+import { RichTextField } from "@/components/studio/rich-field"
 import { DeleteButton, EmptyState, Field, ImageField, Notice, PanelHeader, StatusChip, StatusSwitch, Toggle, inputClass, primaryButton, secondaryButton, textareaClass, type Message } from "@/components/studio/ui"
 import { KindIcon } from "@/components/life-icons"
 import { SpotifyEmbed, TweetCard } from "@/components/embeds"
@@ -198,7 +199,7 @@ export function CollectionPanel({ items, onChanged, group }: PanelProps & { grou
         {config.meta.filter((field) => field.list).map((field) => (
           <Field key={field.key} label={field.label} hint="One per line."><textarea rows={6} value={draft.meta[field.key] ?? ""} onChange={(event) => set("meta", { ...draft.meta, [field.key]: event.target.value })} className={textareaClass} placeholder={field.placeholder} /></Field>
         ))}
-        {config.bodyLabel && <Field label={config.bodyLabel} required={config.bodyRequired}><textarea rows={config.key === "recipe" ? 12 : config.key === "note" ? 8 : 6} value={draft.body} onChange={(event) => set("body", event.target.value)} className={textareaClass} placeholder={config.bodyPlaceholder} /></Field>}
+        {config.bodyLabel && <RichTextField label={config.bodyLabel} required={config.bodyRequired} rows={config.key === "recipe" ? 12 : config.key === "note" ? 8 : 6} value={draft.body} onChange={(value) => set("body", value)} placeholder={config.bodyPlaceholder} />}
         {!config.linkRequired && linkBlock}
         {config.ownable && <Toggle checked={draft.owned} onChange={(value) => set("owned", value)} label="I own this" hint="Leave off to keep it on your wishlist." />}
         <Toggle checked={draft.featured} onChange={(value) => set("featured", value)} label={config.pinnable ? "Pin this note" : "Show on the homepage"} hint={config.pinnable ? "Pinned notes sit first on the Life page." : "Featured entries appear first in “Life, lately” on the homepage."} />

@@ -3,7 +3,9 @@
 import { useEffect, useState, type FormEvent } from "react"
 import { Save } from "lucide-react"
 import { friendlyError } from "@/components/studio/api"
-import { Field, Notice, PanelHeader, inputClass, primaryButton, textareaClass, type Message } from "@/components/studio/ui"
+import { IconsPanel } from "@/components/studio/icons-panel"
+import { RichTextField } from "@/components/studio/rich-field"
+import { Field, Notice, PanelHeader, inputClass, primaryButton, type Message } from "@/components/studio/ui"
 import { createClient } from "@/lib/supabase/client"
 import { defaultSitePages, normalizeSections, type SiteSection } from "@/lib/site-pages"
 
@@ -50,8 +52,8 @@ function PageForm({ slug, label, hint, sections, onSaved }: { slug: PageSlug; la
         <Field label={slug === "home" ? "Name" : "Heading"}><input value={intro.title} onChange={(event) => update({ title: event.target.value })} className={inputClass} /></Field>
         {slug === "home" && <Field label="Role or title" hint="Shown under your name."><input value={intro.role ?? ""} onChange={(event) => update({ role: event.target.value })} className={inputClass} placeholder="Human designer" /></Field>}
       </div>
-      <Field label={slug === "home" ? "Introduction" : "Intro text"} hint={slug === "home" ? "The word “Toothless” links to toothless.design automatically." : undefined}><textarea rows={4} value={intro.text} onChange={(event) => update({ text: event.target.value })} className={textareaClass} /></Field>
-      <Field label="Second paragraph (optional)"><textarea rows={3} value={intro.body} onChange={(event) => update({ body: event.target.value })} className={textareaClass} /></Field>
+      <RichTextField label={slug === "home" ? "Introduction" : "Intro text"} hint={slug === "home" ? "The word “Toothless” links to toothless.design automatically, until you add your own links here." : undefined} value={intro.text} onChange={(text) => update({ text })} rows={4} />
+      <RichTextField label="Second paragraph (optional)" value={intro.body} onChange={(body) => update({ body })} rows={3} />
       <Notice message={message} />
       <button disabled={saving} className={primaryButton}><Save size={14} aria-hidden="true" /> {saving ? "Saving…" : "Save changes"}</button>
     </form>
@@ -81,7 +83,8 @@ export function SiteTextPanel() {
 
   return (
     <div className="space-y-6">
-      <PanelHeader title="Site text" description="The words at the top of each page. Posts, projects and life entries are edited in their own tabs." />
+      <PanelHeader title="Site text" description="The words at the top of each page, and the icons you can use in any text. Posts, projects and life entries are edited in their own tabs." />
+      <IconsPanel />
       {error && <Notice message={{ tone: "error", text: error }} />}
       {!pages && !error && <p className="text-sm text-muted-foreground">Loading…</p>}
       {pages && PAGES.map((page) => <PageForm key={page.slug} {...page} sections={pages[page.slug]} onSaved={(sections) => setPages((current) => (current ? { ...current, [page.slug]: sections } : current))} />)}
