@@ -6,6 +6,20 @@ export interface Project {
   category: string
   image: string
   images: string[]
+  /** Marked "not complete" in Studio. The site shows a padlock and keeps the details hidden. */
+  incomplete?: boolean
+  /** For unfinished projects: how many more images exist but are not sent to the browser. */
+  hiddenImages?: number
+}
+
+/**
+ * Stand-in text with the same length and word shapes as the real text, used behind a blur
+ * so an unfinished project's description is never in the page at all.
+ */
+export function maskText(text: string) {
+  const filler = "loremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtempor"
+  let position = 0
+  return text.replace(/\S/g, () => filler[position++ % filler.length])
 }
 
 export const projects: Project[] = [

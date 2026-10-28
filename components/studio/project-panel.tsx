@@ -1,22 +1,22 @@
 "use client"
 
 import { useMemo, useState, type FormEvent } from "react"
-import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, Plus, Save } from "lucide-react"
+import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, Lock, Plus, Save } from "lucide-react"
 import { removeItem, saveItem, friendlyError, type PanelProps } from "@/components/studio/api"
 import { DeleteButton, EmptyState, Field, GalleryField, ImageField, Notice, PanelHeader, StatusChip, StatusSwitch, Toggle, iconButton, inputClass, primaryButton, secondaryButton, textareaClass, type Message } from "@/components/studio/ui"
 import { createClient } from "@/lib/supabase/client"
 import { slugify, type PortfolioItem } from "@/lib/life-content"
 
-type Draft = { id?: string; title: string; slug: string; slugTouched: boolean; year: string; category: string; description: string; cover: string; gallery: string[]; featured: boolean; published: boolean; sortOrder: number; extra: Record<string, unknown> }
+type Draft = { id?: string; title: string; slug: string; slugTouched: boolean; year: string; category: string; description: string; cover: string; gallery: string[]; featured: boolean; incomplete: boolean; published: boolean; sortOrder: number; extra: Record<string, unknown> }
 
 function toDraft(item: PortfolioItem): Draft {
-  const { body: _body, year, images, ...extra } = item.content
+  const { body: _body, year, images, incomplete, ...extra } = item.content
   void _body
   return {
     id: item.id, title: item.title, slug: item.slug, slugTouched: true,
     year: typeof year === "string" ? year : "", category: item.category ?? "", description: item.excerpt ?? "",
     cover: item.cover_image_url ?? "", gallery: Array.isArray(images) ? images.filter((image): image is string => typeof image === "string") : [],
-    featured: item.featured, published: item.published, sortOrder: item.sort_order ?? 0, extra,
+    featured: item.featured, incomplete: incomplete === true, published: item.published, sortOrder: item.sort_order ?? 0, extra,
   }
 }
 
@@ -30,7 +30,7 @@ export function ProjectPanel({ items, onChanged }: PanelProps) {
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) => setDraft((current) => (current ? { ...current, [key]: value } : current))
 
   function blank(): Draft {
-    return { title: "", slug: "", slugTouched: false, year: String(new Date().getFullYear()), category: "", description: "", cover: "", gallery: [], featured: false, published: false, sortOrder: projects.length ? Math.max(...projects.map((project) => project.sort_order)) + 1 : 0, extra: {} }
+    return { title: "", slug: "", slugTouched: false, year: String(new Date().getFullYear()), category: "", description: "", cover: "", gallery: [], featured: false, incomplete: false, published: false, sortOrder: projects.length ? Math.max(...projects.map((project) => project.sort_order)) + 1 : 0, extra: {} }
   }
 
   async function save(event: FormEvent) {
@@ -42,7 +42,7 @@ export function ProjectPanel({ items, onChanged }: PanelProps) {
     const result = await saveItem({
       title: draft.title.trim(), slug: slugify(draft.slug || draft.title), item_type: "project",
       category: draft.category.trim() || "Project", excerpt: draft.description.trim(),
-      content: { ...draft.extra, body: draft.description.trim(), year: draft.year.trim(), images: draft.gallery },
+      content: { ...draft.extra, body: draft.description.trim(), year: draft.year.trim(), images: draft.gallery, incomplete: draft.incomplete },
       cover_image_url: draft.cover.trim() || null, external_url: null,
       published: draft.published, featured: draft.featured, is_owned: false, sort_order: draft.sortOrder,
       published_at: draft.published ? (items.find((item) => item.id === draft.id)?.published_at ?? new Date().toISOString()) : null,
@@ -93,6 +93,7 @@ export function ProjectPanel({ items, onChanged }: PanelProps) {
         <GalleryField images={draft.gallery} onChange={(images) => set("gallery", images)} folder="projects" onError={(text) => setMessage({ tone: "error", text })} />
         <Field label="Web address" hint={draft.id ? "Changing this breaks links people already have." : "Created from the name."}><input value={draft.slug} onChange={(event) => { set("slug", slugify(event.target.value)); set("slugTouched", true) }} className={inputClass} placeholder="auto-from-name" /></Field>
         <Toggle checked={draft.featured} onChange={(value) => set("featured", value)} label="Show on the homepage" hint="Featured projects appear in “Selected work”. Every published project is always on the Projects page." />
+        <Toggle checked={draft.incomplete} onChange={(value) => set("incomplete", value)} label="Not complete yet" hint="Shows a padlock after the name and blurs the description. Opening it shows only the first image; the rest stays hidden behind a locked glass panel. The hidden text and images are never sent to visitors." />
         <StatusSwitch published={draft.published} onChange={(value) => set("published", value)} />
         <Notice message={message} />
         <div className="flex flex-wrap items-center gap-3">
@@ -118,8 +119,8 @@ export function ProjectPanel({ items, onChanged }: PanelProps) {
               </div>
               {project.cover_image_url ? <img src={project.cover_image_url} alt="" className="size-12 shrink-0 rounded object-cover" /> : <span className="size-12 shrink-0 rounded bg-muted" aria-hidden="true" />}
               <button type="button" onClick={() => { setDraft(toDraft(project)); setMessage(null) }} className="min-w-0 flex-1 text-left">
-                <span className="block truncate text-sm font-medium hover:underline">{project.title}</span>
-                <span className="mt-0.5 block truncate text-xs text-muted-foreground">{[typeof project.content.year === "string" ? project.content.year : "", project.category, project.featured ? "On homepage" : ""].filter(Boolean).join(" · ")}</span>
+                <span className="flex items-center gap-1.5 truncate text-sm font-medium hover:underline">{project.title}{project.content.incomplete === true && <Lock size={12} strokeWidth={1.8} aria-label="Not complete" className="shrink-0 text-muted-foreground" />}</span>
+                <span className="mt-0.5 block truncate text-xs text-muted-foreground">{[typeof project.content.year === "string" ? project.content.year : "", project.category, project.featured ? "On homepage" : "", project.content.incomplete === true ? "Not complete" : ""].filter(Boolean).join(" · ")}</span>
               </button>
               <StatusChip published={project.published} />
               <DeleteButton compact label={`Delete ${project.title}`} onConfirm={() => remove(project)} />
