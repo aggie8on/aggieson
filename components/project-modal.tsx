@@ -114,7 +114,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 {project.images[0] && <Image src={project.images[0]} alt="" fill aria-hidden="true" className="scale-125 object-cover blur-2xl" sizes="624px" />}
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 border border-white/30 bg-white/25 backdrop-blur-xl dark:border-white/10 dark:bg-black/30">
                   <span className="flex size-12 items-center justify-center rounded-full border border-white/40 bg-white/40 shadow-sm backdrop-blur-md dark:border-white/15 dark:bg-white/10"><Lock size={20} strokeWidth={1.6} aria-hidden="true" className="text-foreground" /></span>
-                  <span className="text-xs text-foreground/70">Not complete yet{project.hiddenImages ? ` · ${project.hiddenImages} more ${project.hiddenImages === 1 ? "image" : "images"} to come` : ""}</span>
+                  <span className="text-xs text-foreground/70">Project still in development</span>
                 </div>
               </div>
             )}
