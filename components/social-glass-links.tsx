@@ -18,7 +18,7 @@ export function SocialGlassLinks() {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
   const isDark = mounted && resolvedTheme === "dark"
-  const iconClass = "inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+  const iconClass = "relative inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors before:absolute before:-inset-2 before:content-[''] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 
   return <nav aria-label="Social links and appearance" className="flex shrink-0 items-center gap-1">
     {links.map((link) => <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} title={link.label} className={iconClass}>

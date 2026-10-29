@@ -47,7 +47,7 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems, twe
         if (section.type === "writing") {
           return (
             <section key={section.id} className={sectionSpacing(section.layout)}>
-              <div className="flex justify-start"><Link href="/blog" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">All writing <ArrowUpRight size={13} strokeWidth={1.7} /></Link></div>
+              <div className="flex justify-start"><Link href="/blog" className="-my-2 inline-flex items-center gap-1 py-2 text-sm text-muted-foreground hover:text-foreground">All writing <ArrowUpRight size={13} strokeWidth={1.7} /></Link></div>
               <div className="space-y-3">
                 {posts.map((post) => <Link key={post.slug} href={`/blog/${post.slug}`} className="group flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"><span className="text-sm font-medium tracking-[-0.02em] group-hover:text-muted-foreground">{post.title}</span><span className="shrink-0 text-sm text-muted-foreground">{post.date}</span></Link>)}
                 {posts.length === 0 && <p className="text-sm text-muted-foreground">New writing coming soon.</p>}
@@ -58,7 +58,7 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems, twe
         if (section.type === "life") {
           return (
             <section key={section.id} className={sectionSpacing(section.layout)}>
-              <div className="flex justify-start"><Link href="/life" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">All life <ArrowUpRight size={13} strokeWidth={1.7} /></Link></div>
+              <div className="flex justify-start"><Link href="/life" className="-my-2 inline-flex items-center gap-1 py-2 text-sm text-muted-foreground hover:text-foreground">All life <ArrowUpRight size={13} strokeWidth={1.7} /></Link></div>
               {lifeItems.length ? <LifeEntries items={lifeItems} compact /> : <p className="text-sm leading-6 text-muted-foreground">{section.text || "Recipes, playlists, useful finds, desk notes, and little things from everyday life will live here."}</p>}
             </section>
           )

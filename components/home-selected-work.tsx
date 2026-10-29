@@ -27,7 +27,7 @@ export function HomeSelectedWork({ projectItems = [] }: { projectItems?: Project
     <>
       <section aria-label="Selected work" className="space-y-4">
         <div className="flex justify-start">
-          <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="/projects" className="-my-2 inline-flex items-center gap-1 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
             All projects <ArrowUpRight size={13} strokeWidth={1.7} />
           </Link>
         </div>
@@ -38,7 +38,7 @@ export function HomeSelectedWork({ projectItems = [] }: { projectItems?: Project
               type="button"
               onClick={() => setSelectedProject(project)}
               aria-label={`View ${project.title} project details`}
-              className="group grid w-full grid-cols-[18px_minmax(0,1fr)_auto] items-start gap-x-3 text-left"
+              className="group relative grid w-full grid-cols-[18px_minmax(0,1fr)] items-start gap-x-3 text-left"
             >
               <span className="mt-1 text-muted-foreground transition-colors group-hover:text-foreground"><CategoryIcon category={project.category} /></span>
               <span className="min-w-0">
@@ -48,7 +48,7 @@ export function HomeSelectedWork({ projectItems = [] }: { projectItems?: Project
                 </span>
                 <span className="mt-1 block max-w-xl text-[0.92rem] leading-[1.55] text-muted-foreground">{project.incomplete ? <BlurredText>{project.description}</BlurredText> : project.description}</span>
               </span>
-              <span className="mt-0.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"><ArrowUpRight size={14} strokeWidth={1.5} /></span>
+              <span aria-hidden="true" className="absolute -right-6 top-0.5 hidden text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 sm:block"><ArrowUpRight size={14} strokeWidth={1.5} /></span>
             </button>
           ))}
         </div>

@@ -6,7 +6,7 @@ import { ArrowLeft } from "lucide-react"
  * "← Aggieson / Writing" on detail pages, so there is always a path to Home and to the parent list.
  */
 export function PageNav({ trail = [], showHome = true }: { trail?: { label: string; href: string }[]; showHome?: boolean }) {
-  const linkClass = "text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
+  const linkClass = "-my-2 py-2 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
   // Without the Home link, show a single "back" link to the parent list.
   if (!showHome && trail.length > 0) {
     const parent = trail[trail.length - 1]

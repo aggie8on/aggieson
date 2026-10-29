@@ -41,7 +41,7 @@ export default function StudioLoginPage() {
       <section className="mt-10 space-y-3">
         <p className="text-sm text-muted-foreground">Private workspace</p>
         <h1 className="text-4xl font-medium tracking-[-0.05em]">Studio</h1>
-        <p className="text-sm leading-6 text-muted-foreground">Manage writing, recipes, music, bookmarks, wishlist items, and the little things you want to keep.</p>
+        <p className="text-sm leading-6 text-muted-foreground">Manage your projects, writing, photos, music, bookmarks and the little things you want to keep.</p>
       </section>
       <form onSubmit={submit} className="mt-8 space-y-4">
         <div className="space-y-2">
