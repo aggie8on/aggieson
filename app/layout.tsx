@@ -26,6 +26,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${manrope.variable} font-sans antialiased min-h-screen flex flex-col`}>
+        <noscript><style>{".reveal{opacity:1!important;transform:none!important}"}</style></noscript>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <div className="flex-1">{children}</div>
           <Footer />

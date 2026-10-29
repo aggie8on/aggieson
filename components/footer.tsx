@@ -5,6 +5,8 @@ import {
   CloudDrizzle,
   CloudFog,
   CloudLightning,
+  CloudMoon,
+  Moon,
   CloudRain,
   CloudSnow,
   CloudSun,
@@ -14,10 +16,11 @@ import { useEffect, useState } from "react"
 
 type Weather = { temperature: number; code: number }
 
-function WeatherIcon({ code }: { code: number }) {
+function WeatherIcon({ code, night = false }: { code: number; night?: boolean }) {
   const iconProps = { size: 13, strokeWidth: 1.5 }
-  if (code === 0) return <Sun {...iconProps} />
-  if ([1, 2].includes(code)) return <CloudSun {...iconProps} />
+  // After dark, clear skies show the moon instead of the sun.
+  if (code === 0) return night ? <Moon {...iconProps} /> : <Sun {...iconProps} />
+  if ([1, 2].includes(code)) return night ? <CloudMoon {...iconProps} /> : <CloudSun {...iconProps} />
   if (code === 3) return <Cloud {...iconProps} />
   if ([45, 48].includes(code)) return <CloudFog {...iconProps} />
   if ([51, 53, 55, 56, 57].includes(code)) return <CloudDrizzle {...iconProps} />
@@ -30,6 +33,7 @@ function WeatherIcon({ code }: { code: number }) {
 function LocalConditions() {
   const [time, setTime] = useState("--:--")
   const [weather, setWeather] = useState<Weather | null>(null)
+  const [night, setNight] = useState(false)
 
   useEffect(() => {
     const updateTime = () => {
@@ -39,6 +43,8 @@ function LocalConditions() {
         minute: "2-digit",
         hourCycle: "h23",
       }).format(new Date()))
+      const hour = Number(new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Kampala", hour: "2-digit", hourCycle: "h23" }).format(new Date()))
+      setNight(hour >= 19 || hour < 6)
     }
     updateTime()
     const clock = window.setInterval(updateTime, 30_000)
@@ -69,11 +75,11 @@ function LocalConditions() {
 
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tabular-nums text-muted-foreground">
-      <span>{time}</span>
+      <span>{time.split(":")[0]}<span className="colon-pulse">:</span>{time.split(":")[1]}</span>
       <span className="text-muted-foreground/60">EAT</span>
       <span>Mbale, Uganda</span>
       <span className="inline-flex items-center gap-1.5" aria-label={weather ? `${Math.round(weather.temperature)} degrees Celsius in Mbale` : "Weather in Mbale loading"}>
-        {weather ? <><WeatherIcon code={weather.code} /><span>{Math.round(weather.temperature)}°C</span></> : <><CloudSun size={13} strokeWidth={1.5} /><span>--°C</span></>}
+        {weather ? <><WeatherIcon code={weather.code} night={night} /><span>{Math.round(weather.temperature)}°C</span></> : <><CloudSun size={13} strokeWidth={1.5} /><span>--°C</span></>}
       </span>
     </div>
   )
@@ -82,7 +88,7 @@ function LocalConditions() {
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-border/70 bg-background">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-2 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <LocalConditions />
         <span className="text-xs text-muted-foreground">People, Places & Moments</span>
       </div>

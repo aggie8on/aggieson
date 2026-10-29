@@ -1,9 +1,9 @@
 import type { ReactNode } from "react"
-import { clampIconSize, type IconLibrary } from "@/lib/icons"
+import { clampIconSize, themeSvg, type IconLibrary } from "@/lib/icons"
 
 export function safeSvg(source: string) {
   if (!source || !/<svg[\s>]/i.test(source)) return ""
-  return source
+  return themeSvg(source)
     .replace(/<\s*(script|foreignObject|iframe|object|embed)[\s\S]*?<\/\s*\1\s*>/gi, "")
     .replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
     .replace(/(?:href|xlink:href)\s*=\s*("[^"]*"|'[^']*')/gi, "")
@@ -33,7 +33,7 @@ export function InlineRichText({ children, icons = {}, inlineIconSvg = "", inlin
     const url = entry?.url || (name ? "" : inlineIconUrl)
     const label = entry?.name ?? "icon"
     const size = clampIconSize(sizeOverride, entry?.size ?? 1)
-    const glyph = <span key={key++} aria-hidden="true" style={{ width: `${size}em`, height: `${size}em` }} className="mx-0.5 inline-flex shrink-0 items-center justify-center align-middle [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
+    const glyph = <span key={key++} aria-hidden="true" style={{ width: `${size}em`, height: `${size}em` }} className="mx-0.5 inline-flex shrink-0 items-center justify-center align-middle text-foreground transition-transform duration-500 ease-[cubic-bezier(0.3,1.6,0.5,1)] hover:-rotate-12 hover:scale-110 motion-reduce:transition-none motion-reduce:hover:transform-none [&>svg]:size-full" dangerouslySetInnerHTML={{ __html: svg }} />
     if (insideLink || !url) return glyph
     return <a key={key++} href={url} target="_blank" rel="noopener noreferrer" aria-label={label} className="inline-flex items-center text-foreground transition-opacity hover:opacity-70">{glyph}</a>
   }

@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  color-scheme: light;
   --background: #f6f6f4;
   --foreground: #292929;
   --card: #f0f0ee;
@@ -14,8 +15,8 @@
   --primary-foreground: #f6f6f4;
   --secondary: #ededeb;
   --secondary-foreground: #292929;
-  --muted: #747471;
-  --muted-foreground: #747471;
+  --muted: #e9e9e6;
+  --muted-foreground: #6a6a67;
   --accent: #ededeb;
   --accent-foreground: #292929;
   --destructive: oklch(0.577 0.245 27.325);
@@ -35,6 +36,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: #191919;
   --foreground: #e8e8e5;
   --card: #222222;
@@ -45,7 +47,7 @@
   --primary-foreground: #191919;
   --secondary: #292929;
   --secondary-foreground: #e8e8e5;
-  --muted: #a2a29d;
+  --muted: #2a2a2a;
   --muted-foreground: #a2a29d;
   --accent: #292929;
   --accent-foreground: #e8e8e5;
@@ -173,3 +175,56 @@
 @media (prefers-reduced-motion: reduce) {
   .eq-bar { animation: none; transform: scaleY(0.7); }
 }
+
+/* ---------- Motion ---------- */
+
+/* Scroll reveal (see components/reveal.tsx). */
+.reveal { transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal[data-reveal="out"] { opacity: 0; transform: translateY(10px); }
+.reveal[data-reveal="in"] { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal[data-reveal="out"] { opacity: 1; transform: none; transition: none; }
+}
+
+/* Small per-category icon motions on project rows. */
+@media (prefers-reduced-motion: no-preference) {
+  .group:hover .ic-tilt, .group:focus-visible .ic-tilt { animation: ic-tilt 0.7s ease-in-out; }
+  .group:hover .ic-roll, .group:focus-visible .ic-roll { animation: ic-roll 0.8s ease-in-out; }
+  .group:hover .ic-pulse, .group:focus-visible .ic-pulse { animation: ic-pulse 0.8s ease-in-out; }
+  .group:hover .ic-beat, .group:focus-visible .ic-beat { animation: ic-beat 0.8s ease-in-out; }
+  .group:hover .ic-flicker, .group:focus-visible .ic-flicker { animation: ic-flicker 0.9s steps(1, end); }
+  .group:hover .ic-spin, .group:focus-visible .ic-spin { animation: ic-spin 0.9s ease-in-out; }
+}
+@keyframes ic-tilt { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-16deg); } 65% { transform: rotate(10deg); } }
+@keyframes ic-roll { 0%, 100% { transform: translateX(0) rotate(0); } 40% { transform: translateX(3px) rotate(6deg); } 75% { transform: translateX(-1px) rotate(-3deg); } }
+@keyframes ic-pulse { 0%, 100% { transform: scaleY(1); } 35% { transform: scaleY(1.4); } 70% { transform: scaleY(0.8); } }
+@keyframes ic-beat { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.28); } 50% { transform: scale(1); } 70% { transform: scale(1.16); } }
+@keyframes ic-flicker { 0%, 100% { opacity: 1; } 20% { opacity: 0.35; } 40% { opacity: 1; } 60% { opacity: 0.55; } 80% { opacity: 1; } }
+@keyframes ic-spin { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
+
+/* Padlock jiggle when someone taps a locked project. */
+@keyframes lock-jiggle {
+  0%, 100% { transform: rotate(0) translateX(0); }
+  20% { transform: rotate(-12deg) translateX(-2px); }
+  40% { transform: rotate(10deg) translateX(2px); }
+  60% { transform: rotate(-7deg) translateX(-1px); }
+  80% { transform: rotate(4deg); }
+}
+.lock-jiggle { animation: lock-jiggle 0.55s ease-in-out; }
+@media (prefers-reduced-motion: reduce) { .lock-jiggle { animation: none; } }
+
+/* Theme switch: the new colours spread out from the toggle button (View Transitions API). */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+  ::view-transition-old(root) { z-index: 1; }
+  ::view-transition-new(root) { z-index: 2; animation: theme-wipe 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+}
+@keyframes theme-wipe {
+  from { clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0)); }
+  to { clip-path: circle(150vmax at var(--vt-x, 50%) var(--vt-y, 0)); }
+}
+
+/* Footer clock: the colon breathes. */
+.colon-pulse { animation: colon-pulse 2s ease-in-out infinite; }
+@keyframes colon-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .colon-pulse { animation: none; } }
