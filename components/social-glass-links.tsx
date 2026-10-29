@@ -2,7 +2,7 @@
 
 import { Instagram, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { useEffect, useState, type MouseEvent } from "react"
+import { useEffect, useState } from "react"
 import { flushSync } from "react-dom"
 
 function XIcon() {
@@ -21,19 +21,36 @@ export function SocialGlassLinks() {
   const isDark = mounted && resolvedTheme === "dark"
   const iconClass = "relative inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors before:absolute before:-inset-2 before:content-[''] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 
-  /** Switches theme with the new colours spreading out from the button, where the browser supports it. */
-  function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
+  /**
+   * Switches theme slowly: night settles in from the top when going dark, daylight spreads in from the east (the
+   * top-right) when going light. Browsers without View Transitions get a soft fade instead, and people who ask for
+   * reduced motion get an instant switch.
+   */
+  function toggleTheme() {
     const next = isDark ? "light" : "dark"
-    const doc = document as Document & { startViewTransition?: (update: () => void) => unknown }
-    if (!doc.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setTheme(next); return }
-    const box = event.currentTarget.getBoundingClientRect()
     const root = document.documentElement
-    root.style.setProperty("--vt-x", `${box.left + box.width / 2}px`)
-    root.style.setProperty("--vt-y", `${box.top + box.height / 2}px`)
-    doc.startViewTransition(() => {
-      flushSync(() => setTheme(next))
-      root.classList.toggle("dark", next === "dark")
-    })
+    const doc = document as Document & { startViewTransition?: (update: () => void) => { finished: Promise<unknown> } }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setTheme(next); return }
+
+    if (doc.startViewTransition) {
+      root.dataset.vt = next === "dark" ? "to-dark" : "to-light"
+      const transition = doc.startViewTransition(() => {
+        flushSync(() => setTheme(next))
+        root.classList.toggle("dark", next === "dark")
+      })
+      void transition.finished.finally(() => { delete root.dataset.vt })
+      return
+    }
+
+    const veil = document.createElement("div")
+    veil.className = "theme-veil"
+    veil.style.background = getComputedStyle(document.body).backgroundColor
+    document.body.appendChild(veil)
+    setTheme(next)
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      veil.dataset.out = ""
+      window.setTimeout(() => veil.remove(), 1200)
+    }))
   }
 
   return <nav aria-label="Social links and appearance" className="flex shrink-0 items-center gap-1">
