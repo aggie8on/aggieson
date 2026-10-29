@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react"
 import { HomeSelectedWork } from "@/components/home-selected-work"
 import { HomeTweets } from "@/components/home-tweets"
 import { InlineRichText } from "@/components/inline-rich-text"
+import { Reveal } from "@/components/reveal"
 import { LifeEntries } from "@/components/life-entries"
 import { SocialGlassLinks } from "@/components/social-glass-links"
 import type { PortfolioItem } from "@/lib/life-content"
@@ -23,6 +24,15 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems, twe
   return (
     <div className="space-y-12 md:space-y-14">
       {sections.filter((section) => section.visible).map((section) => {
+        const node = renderSection(section)
+        if (!node) return null
+        return section.type === "projects" || section.type === "tweets" ? node : <Reveal key={section.id}>{node}</Reveal>
+      })}
+    </div>
+  )
+
+  function renderSection(section: SiteSection) {
+    {
         if (section.type === "intro") {
           return (
             <section key={section.id} aria-labelledby={section.id + "-heading"} className="space-y-5">
@@ -71,7 +81,6 @@ export function HomePageSections({ sections, posts, lifeItems, projectItems, twe
           return <section key={section.id} className={sectionSpacing(section.layout)}>{section.title && <h2 className="text-sm font-medium text-muted-foreground">{section.title}</h2>}{section.text && <p className="text-sm leading-6 text-muted-foreground">{section.text}</p>}{section.body && <a className="inline-flex items-center gap-1 text-sm underline underline-offset-4" href={section.body} target="_blank" rel="noreferrer">Open link <ArrowUpRight size={13} /></a>}</section>
         }
         return <section key={section.id} className={sectionSpacing(section.layout)}>{section.eyebrow && <p className="text-sm text-muted-foreground">{section.eyebrow}</p>}{section.title && <h2 className="text-base font-medium tracking-[-0.03em]">{section.title}</h2>}{section.text && <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{section.text}</p>}{section.body && <p className="max-w-2xl whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{section.body}</p>}{section.image && <img src={section.image} alt={section.title || "Portfolio image"} className="max-h-[28rem] w-full object-cover" />}</section>
-      })}
-    </div>
-  )
+    }
+  }
 }

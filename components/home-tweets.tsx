@@ -1,4 +1,5 @@
 import { TweetCard } from "@/components/embeds"
+import { Reveal } from "@/components/reveal"
 import type { TweetPost } from "@/lib/portfolio-data"
 
 /**
@@ -11,10 +12,10 @@ export function HomeTweets({ posts, title }: { posts: TweetPost[]; title?: strin
     <section aria-label={title || "Posts from X"} className="space-y-4">
       {title && <h2 className="text-sm font-medium text-muted-foreground">{title}</h2>}
       <ul className="columns-1 gap-3 sm:columns-2">
-        {posts.map((post) => (
-          <li key={post.id} className="mb-3 break-inside-avoid">
+        {posts.map((post, index) => (
+          <Reveal as="li" key={post.id} delay={index * 70} className="mb-3 break-inside-avoid">
             <TweetCard tweet={post.tweet} note={post.note} />
-          </li>
+          </Reveal>
         ))}
       </ul>
     </section>

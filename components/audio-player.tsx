@@ -56,7 +56,7 @@ function ProgressBar({ value, max, onSeek, label }: { value: number; max: number
       onPointerCancel={() => setDragging(false)}
       className="group relative flex h-5 w-full cursor-pointer touch-none items-center outline-none"
     >
-      <div ref={trackRef} className="relative h-[3px] w-full rounded-full bg-border transition-[height] group-hover:h-1 group-focus-visible:h-1">
+      <div ref={trackRef} className={`relative w-full rounded-full bg-border transition-[height] ${dragging ? "h-1.5" : "h-[3px] group-hover:h-1 group-focus-visible:h-1"}`}>
         <div className="absolute inset-y-0 left-0 rounded-full bg-foreground" style={{ width: `${ratio * 100}%` }} />
         <span
           aria-hidden="true"
@@ -158,7 +158,10 @@ export function AudioPlayer({ tracks }: { tracks: Track[] }) {
         <div className="flex shrink-0 items-center gap-1">
           <button type="button" onClick={previous} disabled={!multiple && time < 1} aria-label={multiple ? "Previous track" : "Restart"} className={`${control} size-9`}><SkipBack size={16} strokeWidth={1.6} aria-hidden="true" /></button>
           <button type="button" onClick={toggle} aria-label={playing ? "Pause" : "Play"} className="inline-flex size-10 items-center justify-center rounded-full bg-foreground text-background transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-ring/40">
-            {playing ? <Pause size={16} fill="currentColor" strokeWidth={0} aria-hidden="true" /> : <Play size={16} fill="currentColor" strokeWidth={0} className="translate-x-px" aria-hidden="true" />}
+            <span className="relative block size-4" aria-hidden="true">
+              <Play size={16} fill="currentColor" strokeWidth={0} className={`absolute inset-0 translate-x-px transition-all duration-200 motion-reduce:transition-none ${playing ? "rotate-90 scale-50 opacity-0" : "rotate-0 scale-100 opacity-100"}`} />
+              <Pause size={16} fill="currentColor" strokeWidth={0} className={`absolute inset-0 transition-all duration-200 motion-reduce:transition-none ${playing ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-50 opacity-0"}`} />
+            </span>
           </button>
           <button type="button" onClick={() => go(index + 1, playing || shouldPlay.current)} disabled={!multiple} aria-label="Next track" className={`${control} size-9`}><SkipForward size={16} strokeWidth={1.6} aria-hidden="true" /></button>
         </div>

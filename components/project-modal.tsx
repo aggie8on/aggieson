@@ -1,19 +1,24 @@
 "use client"
 
-import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react"
 import { Lock, X } from "lucide-react"
 import Image from "next/image"
 import type { Project } from "@/lib/projects"
 import { Button } from "@/components/ui/button"
 import { BlurredText } from "@/components/project-lock"
 
+/** Where the clicked row was on screen, so the pop-up can grow out of it. */
+export type Origin = { x: number; y: number; width: number; height: number }
+
 interface ProjectModalProps {
   project: Project | null
+  origin?: Origin | null
   onClose: () => void
 }
 
-export function ProjectModal({ project, onClose }: ProjectModalProps) {
+export function ProjectModal({ project, origin = null, onClose }: ProjectModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
+  const [jiggle, setJiggle] = useState(0)
   const previouslyFocusedRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -30,6 +35,27 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       previouslyFocusedRef.current = null
     }
   }, [project])
+
+  useLayoutEffect(() => setJiggle(0), [project])
+
+  // The pop-up opens as a band the size of the row you clicked, then unfolds to full size.
+  useLayoutEffect(() => {
+    const dialog = dialogRef.current
+    if (!project || !origin || !dialog || typeof dialog.animate !== "function") return
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const box = dialog.getBoundingClientRect()
+    if (!box.width || !box.height) return
+    const dx = origin.x + origin.width / 2 - (box.left + box.width / 2)
+    const dy = origin.y + origin.height / 2 - (box.top + box.height / 2)
+    const band = Math.max(0, (box.height - origin.height) / 2)
+    dialog.animate(
+      [
+        { transform: `translate(${dx}px, ${dy}px)`, clipPath: `inset(${band}px 0px round 10px)`, opacity: 0.3 },
+        { transform: "translate(0, 0)", clipPath: "inset(0px 0px round 16px)", opacity: 1 },
+      ],
+      { duration: 460, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
+    )
+  }, [project, origin])
 
   useEffect(() => {
     if (!project) return
@@ -76,7 +102,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         aria-modal="true"
         aria-labelledby="project-modal-title"
         tabIndex={-1}
-        className="glass glass-lg relative max-h-[88vh] w-full max-w-[calc(42rem-3rem)] overflow-y-auto overscroll-contain rounded-2xl focus:outline-none motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-200"
+        className={`glass glass-lg relative max-h-[88vh] w-full max-w-[calc(42rem-3rem)] overflow-y-auto overscroll-contain rounded-2xl focus:outline-none ${origin ? "" : "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-200"}`}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={trapFocus}
       >
@@ -109,14 +135,14 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               </div>
             ))}
             {project.incomplete && (
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border/60 bg-foreground/5" role="img" aria-label="More of this project is hidden until it is complete">
+              <button type="button" onClick={() => setJiggle((count) => count + 1)} aria-label="More of this project is hidden until it is complete" className="group/lock relative block aspect-video w-full cursor-pointer overflow-hidden rounded-lg border border-border/60 bg-foreground/5 text-left focus-visible:ring-2 focus-visible:ring-ring/60">
                 {/* Only the first image is ever sent, so the glass sits over a heavily blurred copy of it. */}
                 {project.images[0] && <Image src={project.images[0]} alt="" fill aria-hidden="true" className="scale-125 object-cover blur-2xl" sizes="624px" />}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 border border-white/30 bg-white/25 backdrop-blur-xl dark:border-white/10 dark:bg-black/30">
-                  <span className="flex size-12 items-center justify-center rounded-full border border-white/40 bg-white/40 shadow-sm backdrop-blur-md dark:border-white/15 dark:bg-white/10"><Lock size={20} strokeWidth={1.6} aria-hidden="true" className="text-foreground" /></span>
+                <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 border border-white/30 bg-white/25 backdrop-blur-xl dark:border-white/10 dark:bg-black/30">
+                  <span key={jiggle} className={`flex size-12 items-center justify-center rounded-full border border-white/40 bg-white/40 shadow-sm backdrop-blur-md transition-transform duration-300 group-hover/lock:scale-105 motion-reduce:transform-none dark:border-white/15 dark:bg-white/10 ${jiggle ? "lock-jiggle" : ""}`}><Lock size={20} strokeWidth={1.6} aria-hidden="true" className="text-foreground" /></span>
                   <span className="text-xs text-foreground/70">Project still in development</span>
-                </div>
-              </div>
+                </span>
+              </button>
             )}
           </div>
         </div>

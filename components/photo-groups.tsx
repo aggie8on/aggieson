@@ -53,8 +53,13 @@ export function PhotoGroups({ groups }: { groups: PhotoGroup[] }) {
               <button type="button" onClick={() => setOpenId(entry.id)} aria-haspopup="dialog" aria-label={`${entry.title || "Photos"}, ${count} ${count === 1 ? "photo" : "photos"}. Open`} className="group relative block w-full text-left focus-visible:outline-none">
                 {count > 1 && (
                   <>
-                    <span aria-hidden="true" className="absolute inset-0 translate-x-2 translate-y-2 rounded-xl border border-border bg-muted/30" />
-                    <span aria-hidden="true" className="absolute inset-0 translate-x-1 translate-y-1 rounded-xl border border-border bg-accent" />
+                    {/* Two more photos peek out behind the cover, and fan apart on hover. */}
+                    <span aria-hidden="true" className="absolute inset-0 origin-bottom-left translate-x-2 translate-y-2 overflow-hidden rounded-xl border border-border bg-muted opacity-70 transition-transform duration-500 ease-out group-hover:translate-x-3 group-hover:translate-y-1 group-hover:-rotate-[7deg] motion-reduce:transition-none motion-reduce:group-hover:transform-none">
+                      <img src={entry.images[Math.min(2, count - 1)]} alt="" loading="lazy" className="size-full object-cover grayscale" />
+                    </span>
+                    <span aria-hidden="true" className="absolute inset-0 origin-bottom-left translate-x-1 translate-y-1 overflow-hidden rounded-xl border border-border bg-muted opacity-85 transition-transform duration-500 ease-out group-hover:translate-x-1.5 group-hover:-rotate-[3.5deg] motion-reduce:transition-none motion-reduce:group-hover:transform-none">
+                      <img src={entry.images[1]} alt="" loading="lazy" className="size-full object-cover grayscale" />
+                    </span>
                   </>
                 )}
                 <span className="relative block aspect-square overflow-hidden rounded-xl border border-border bg-muted group-focus-visible:ring-2 group-focus-visible:ring-ring/60">
@@ -89,7 +94,7 @@ export function PhotoGroups({ groups }: { groups: PhotoGroup[] }) {
             <div className="overflow-y-auto p-4 sm:p-5">
               <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {group?.images.map((src, position) => (
-                  <li key={`${src}-${position}`}>
+                  <li key={`${src}-${position}`} style={{ animationDelay: `${Math.min(position, 12) * 45}ms` }} className="animate-in fade-in-0 zoom-in-90 slide-in-from-bottom-2 duration-300 fill-mode-backwards motion-reduce:animate-none">
                     <button type="button" onClick={() => setViewing(position)} aria-label={`View photo ${position + 1} of ${total}`} className="block aspect-square w-full overflow-hidden rounded-lg border border-border bg-muted focus-visible:ring-2 focus-visible:ring-ring/60">
                       <img src={src} alt="" loading="lazy" className="size-full object-cover transition-transform duration-500 hover:scale-[1.03]" />
                     </button>
