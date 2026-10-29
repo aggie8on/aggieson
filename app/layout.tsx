@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Manrope } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Footer } from "@/components/footer"
+import { Sky } from "@/components/sky"
 import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${manrope.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <noscript><style>{".reveal{opacity:1!important;transform:none!important}"}</style></noscript>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Sky />
           <div className="flex-1">{children}</div>
           <Footer />
         </ThemeProvider>
